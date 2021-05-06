@@ -175,7 +175,20 @@ export const navRouter = [
   },
 ]
 
-const routerMap = [...navRouter]
+const routerMap = [
+  ...navRouter,
+  {
+    path: '/blog/new',
+    name: 'BlogNew',
+    component: () => import('@/views/blog/BlogPublish'),
+    meta: { title: '博客新增', requireLogin: true },
+  },
+  {
+    path: '/blog/edit/:id',
+    name: 'BlogEdit',
+    component: () => import('@/views/blog/BlogPublish')
+  },
+]
 
 export default new Router({
   scrollBehavior: () => ({ y: 0 }),

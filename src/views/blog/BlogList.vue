@@ -24,7 +24,7 @@
         <tdf-box class="text-h6" content="最新话题"> </tdf-box>
         <tdf-loading-scroll @loadMore="getBlogList">
           <tdf-box-detail
-            v-for="(item,index) in blogs"
+            v-for="(item, index) in blogs"
             :key="index"
             :body="item"
           ></tdf-box-detail>
@@ -34,6 +34,7 @@
       <div class="col-4 q-pa-lg">
         <div class="q-pa-md">
           <q-btn
+            @click="publishBlog"
             class="text-center text-h6"
             color="primary"
             style="width: 100%; height: 50px"
@@ -150,6 +151,12 @@ export default {
       this.listQuery.tagName = tag.tagName
       this.blogs = []
       this.getBlogList()
+    },
+    publishBlog() {
+      let routeUrl = this.$router.resolve({
+        name: 'BlogNew',
+      })
+      window.open(routeUrl.href, '_blank')
     },
   },
 }

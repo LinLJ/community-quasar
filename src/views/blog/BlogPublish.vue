@@ -1,13 +1,17 @@
 <template>
   <div>
     <div class="row q-pt-xs">
-      <div class="col-8 q-px-xs q-py-lg">
-        <tdf-title :data="blog"></tdf-title>
-      </div>
       <div class="col-4 q-px-xs q-py-lg">
-        <tdf-box class="text-h6" showBorder content="最新发布文章">
-          <tdf-list rounded :list="lastestArtical"></tdf-list>
-        </tdf-box>
+        <span>草稿</span>
+      </div>
+      <div class="col-8 q-px-xs q-py-lg">
+        <div class="colum">
+          <div>类型</div>
+          <div>标签</div>
+          <div>正文</div>
+          <tdf-editor></tdf-editor>
+
+        </div>
       </div>
     </div>
   </div>
