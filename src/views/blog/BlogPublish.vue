@@ -10,7 +10,8 @@
           <div>标签</div>
           <div>正文</div>
           <tdf-editor></tdf-editor>
-
+          <q-btn @click="publicBlog">发布</q-btn>
+          <q-btn>保存为草稿</q-btn>
         </div>
       </div>
     </div>
@@ -18,70 +19,12 @@
 </template>
 
 <script>
-import { getBlog,getLastReply } from '@/api/blog'
 export default {
   data() {
-    return {
-      
-      lastestArtical: [],
-      lastReplyLoading: false,
-      blogLoading: false,
-      blog: {
-          isLogin: undefined,
-          visitCount: undefined,
-          contentInfo: {
-            baseUrl: undefined,
-            baseUrlState: undefined,
-            userUrl: undefined,
-            userUrlState: undefined,
-            id: undefined,
-            categoryId: undefined,
-            content: undefined,
-            createTime: undefined,
-            deleteFlag: undefined,
-            stickOrder: undefined,
-            title: undefined,
-            subTitle: undefined,
-            updateTime: undefined,
-            userId: undefined,
-            userName: undefined,
-            validFlag: undefined,
-            originalFlag: undefined,
-            tags: [],
-            token: undefined,
-            titleSearch: undefined,
-            replyCount: undefined,
-            readCount: undefined
-          }
-        },
-    }
+    return {}
   },
-  created() {
-    this.getBlog(this.$route.params.id)
-    this.getLastReply()
-  },
-  methods: {
-    getLastReply() {
-      this.lastReplyLoading = true
-      getLastReply()
-        .then((response) => {
-          this.lastestArtical = response.data
-        })
-        .finally(() => {
-          this.lastReplyLoading = false
-        })
-    },
-    getBlog(id) {
-        this.blogLoading = true
-        getBlog(id).then(response => {
-          this.blog = response.data
-          document.title = "博客-" + this.blog.contentInfo.title;
-          this.blog.contentInfo.tags = this.blog.contentInfo.tags.replace(/，/ig, ',').split(',')
-        }).finally(() => {
-          this.blogLoading = false
-        })
-      },
-  },
+  created() {},
+  methods: {},
 }
 </script>
 
