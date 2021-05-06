@@ -1,5 +1,5 @@
 <template>
-  <div>forum</div>
+  <router-view></router-view>
 </template>
 
 <script>

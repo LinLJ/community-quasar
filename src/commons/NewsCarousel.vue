@@ -15,16 +15,16 @@
         class="bg-primary text-white shadow-1 rounded-borders"
       >
         <q-carousel-slide
-          :name="item.linkId"
+          :name="index"
           class="column no-wrap flex-center"
-          v-for="item in list"
+          v-for="(item,index) in list"
           :img-src="item.pic"
           :key="item.linkId"
         >
           <div
             v-if="showTitle"
             class="absolute-bottom custom-caption"
-            :class="{ 'title-shadow': titleShadow }"
+            :class="[{ 'title-shadow': titleShadow }]"
           >
             <div :class="titleText">{{ item.title }}</div>
           </div>
@@ -40,16 +40,14 @@ export default {
   data() {
     return {
       autoplay: true,
+      slide:1
     }
   },
   props: {
     list: {
       type: Array,
     },
-    slide: {
-      type: String,
-      default: '',
-    },
+
     height: {
       type: String,
       default: '300px',
@@ -66,8 +64,7 @@ export default {
       type: Boolean,
       default: false,
     },
-
-  },
+  }
 }
 </script>
 
@@ -84,7 +81,7 @@ q-carousel_-slide {
 .title-shadow {
   background-color: rgba(0, 0, 0, 0.3);
 }
-.title-color{
-  color:titleColor
+.title-color {
+  color: titleColor;
 }
 </style>

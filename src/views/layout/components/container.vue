@@ -1,6 +1,5 @@
 <template>
-  <div>
-
+  <div class="pc-screan-width">
     <router-view />
   </div>
 </template>

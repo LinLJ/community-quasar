@@ -48,12 +48,12 @@ export const navRouter = [
             component: () => import('@/views/blog/BlogList'),
             meta: { title: '博客列表' },
           },
-          // {
-          //   path: 'view/:id',
-          //   name: 'blogView',
-          //   component: () => import('@/views/blog/BlogView'),
-          //   meta: { title: '博客详情' },
-          // },
+          {
+            path: 'view/:id',
+            name: 'blogView',
+            component: () => import('@/views/blog/BlogView'),
+            meta: { title: '博客详情' },
+          },
           // {
           //   path: '/community/blogShow',
           //   name: 'community',

@@ -8,9 +8,7 @@
     >
       <Header />
     </q-header>
-
     <q-page-container>
-
       <Container />
       <Footer />
     </q-page-container>
@@ -75,8 +73,8 @@ export default {
       ],
     }
   },
-  computed:{
-    ...mapGetters(['isLogin'])
+  computed: {
+    ...mapGetters(['isLogin']),
   },
   created() {
     this.fabYoutube = fabYoutube
