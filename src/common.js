@@ -11,6 +11,7 @@ import TdfLoading from '@/commons/Loading.vue'
 import TdfBoxDetail from '@/commons/BoxDetail.vue'
 import TdfLoadingScroll from '@/commons/LoadingScroll.vue'
 import TdfMdEditor from '@/commons/MdEditor/index.vue'
+import TdfMdEditorView from '@/commons/MdEditor/MdEditorView.vue'
 import TdfTitle from '@/commons/Title.vue'
 
 Vue.component(TdfRouteTag.name, TdfRouteTag)
@@ -26,4 +27,5 @@ Vue.component(TdfLoading.name, TdfLoading)
 Vue.component(TdfBoxDetail.name, TdfBoxDetail)
 Vue.component(TdfLoadingScroll.name, TdfLoadingScroll)
 Vue.component(TdfMdEditor.name, TdfMdEditor)
+Vue.component(TdfMdEditorView.name, TdfMdEditorView)
 Vue.component(TdfTitle.name, TdfTitle)

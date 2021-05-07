@@ -67,7 +67,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-  .editormd-fullscreen {
-    z-index: 2
-  }
+.editormd-fullscreen {
+  z-index: 2;
+}
 </style>

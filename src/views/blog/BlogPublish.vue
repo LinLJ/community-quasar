@@ -9,8 +9,8 @@
           <div>类型</div>
           <div>标签</div>
           <div>正文</div>
-          <tdf-editor></tdf-editor>
-          <q-btn @click="publicBlog">发布</q-btn>
+          <tdf-md-editor></tdf-md-editor>
+          <q-btn>发布</q-btn>
           <q-btn>保存为草稿</q-btn>
         </div>
       </div>
