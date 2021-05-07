@@ -125,7 +125,6 @@ export default {
       // 左侧讨论组
       getForumGroups()
         .then((response) => {
-          console.log(response.data, '222222222222222222222222222')
           this.forumGroups = response.data
         })
         .catch(() => {})

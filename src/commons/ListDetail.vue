@@ -42,8 +42,5 @@ export default {
       defaule:false
     }
   },
-  mounted() {
-    console.info(this.list, this.url, 'this.list')
-  },
 }
 </script>

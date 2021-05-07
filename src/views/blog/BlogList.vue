@@ -110,13 +110,9 @@ export default {
     getBlogList() {
       return getBlogList(this.listQuery)
         .then((response) => {
-          console.info(response, '============')
           this.isLastPage = response.data.isLast
           this.blogs.push(...response.data.content) // 搜索不是滚动加载
-          console.info(
-            this.blogs,
-            'this.tagsthis.tagsthis.tagsthis.tagsthis.tagsthis.tagsthis.tagsthis.tagsthis.tagsthis.tagsthis.tags'
-          )
+
           this.listQuery.page++
         })
         .finally(() => {

@@ -10,13 +10,10 @@ const service = axios.create({
 service.interceptors.request.use(
   async config => {
     // 后端服务jwt token信息
-    console.info("进入request.use")
     if (getToken()) {
       var tmpToken = getToken();
-      console.info("tmpToken",tmpToken)
       if (tmpToken.refresh_token &&
         tmpToken.create_timestamp + tmpToken.expires_in * 1000 - 20000 < new Date().getTime()) {
-        console.info("进入刷新token阶段")
         // 如果支持刷新token,并且距离tokeny已经，并且在可刷新时间内提前20秒过期前尝试内自动刷新token
         var refreshResponse = await refreshToken(tmpToken.refresh_token)
         //console.log("refreshresponse",refreshResponse)
@@ -36,8 +33,6 @@ service.interceptors.request.use(
     //console.info(config)
   return config
 }, error => {
-    console.info("进入request error")
-  console.log(JSON.stringify(error)) // for debug
   Promise.reject(error)
 })
 
@@ -47,7 +42,6 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => { // http status为2xx的进入
     const data = response.data
-    console.info("data.code",data.code)
     if (!validateNull(data.code) && data.code !== 200) {
 
       switch (data.code) {
@@ -67,7 +61,6 @@ service.interceptors.response.use(
       }
       return Promise.reject(data.message)
     } else {
-      console.info("code=200时，data值：",data)
       return data
     }
   },

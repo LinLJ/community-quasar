@@ -10,37 +10,25 @@
       </q-btn>
       <q-space />
       <div class="YL__toolbar-input-container row no-wrap">
-        <tdf-route-tag v-show="!showSearch" :list="navigation" />
-
-        <!-- <q-input
-          v-if="showSearch"
-          dense
-          square
-          borderless
-          v-model="search"
-          @blur="blurInput"
-          placeholder="Search"
-          ref="searchInput"
-          class="bg-white col"
+        <q-tabs
+          exact="false"
+          class="router-tag-width row  show-menu-tags"
+          v-show="!showSearch"
         >
-          <template>
-            <q-btn
-              @click="focusInput"
-              text-color="grey-8"
-              icon="search"
-              size="10px"
-              unelevated
-            />
-          </template>
-        </q-input>
-        <q-btn
-          v-else
-          @click="focusInput"
-          text-color="grey-8"
-          icon="search"
-          size="10px"
-          unelevated
-        /> -->
+          <q-route-tab
+            class="col"
+            v-for="item in navigation"
+            :key="item.path"
+            :name="item.meta.title"
+            :label="item.meta.title"
+            :exact="item.exact"
+            :icon="item.icon"
+            :to="item.path"
+          />
+        </q-tabs>
+
+
+
 
         <q-input
           v-if="showSearch"
@@ -62,8 +50,8 @@
           unelevated
         />
         <q-tabs>
-          <q-tab v-if="!isLogin" name="login" label="登陆"> </q-tab>
-          <q-tab v-else name="logout" label="注销"> </q-tab>
+          <q-tab v-if="!isLogin" name="login" label="登陆" @click="login"> </q-tab>
+          <q-tab v-else name="logout" label="注销" @click="logout"> </q-tab>
         </q-tabs>
       </div>
 
@@ -89,9 +77,6 @@ export default {
   },
   computed: {
     ...mapGetters(['navigation', 'isLogin']),
-  },
-  mounted() {
-    console.log('获取当前导航栏：', this.navigation)
   },
   methods: {
     login() {
@@ -130,5 +115,8 @@ export default {
     right: 9px;
     font-size: 12px;
   }
+}
+.router-tag-width {
+  width: auto;
 }
 </style>

@@ -1,4 +1,4 @@
-// import { getToken } from '@/utils/token'
+import { getToken } from '@/utils/token'
 
 const user = {
   state: {
@@ -11,7 +11,7 @@ const user = {
   },
   actions: {
     UpdateIsLogin({ commit, state, dispatch }) {
-      const token = "getToken()"
+      const token = getToken()
       if (state.isLogin && !token) { // 登录变成未登录
         commit('SET_IS_LOGIN', false)
         dispatch('UpdateNav', false, { root: true })

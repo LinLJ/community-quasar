@@ -9,7 +9,6 @@ import { removeToken } from './token'
  * hack方法，接受参数为登录成功后重定向地址，缺省时重定向首页
  */
 export function login(redirectPath) {
-  console.info("重定向地址：",redirectPath)
   if (redirectPath) {
     window.sessionStorage.setItem('redirectPath', redirectPath)
   }

@@ -186,8 +186,9 @@ const routerMap = [
   {
     path: '/blog/edit/:id',
     name: 'BlogEdit',
-    component: () => import('@/views/blog/BlogPublish')
+    component: () => import('@/views/blog/BlogPublish'),
   },
+  { path: '/ssologin', component: () => import('@/views/ssologin/index') },
 ]
 
 export default new Router({

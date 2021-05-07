@@ -2,11 +2,26 @@
 @import '~quasar-styl';
 // @import '~quasar-addon-styl';
 
-
-  @media screen and (min-width:$breakpoint-md-min){
-    .pc-screan-width{
-      max-width:1200px;
-      margin: 0 auto
-    }
-    
+@media screen and (min-width: $breakpoint-md-min) {
+  .pc-screan-width {
+    max-width: 1200px;
+    margin: 0 auto;
   }
+  
+}
+@media screen and (max-width: $breakpoint-sm-max) {
+  .show-menu-tags {
+    display:none
+  }
+  
+}
+
+  
+// @media screen and (max-width: $breakpoint-md-min) {
+//   .pc-screan-width {
+//     max-width: 1200px;
+//     margin: 0 auto;
+//   }
+  
+// }
+

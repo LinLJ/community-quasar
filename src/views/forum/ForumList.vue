@@ -6,9 +6,7 @@
 
 <script>
 export default {
-  mounted(){
-    console.info("window",window)
-  }
+
 
 }
 </script>
