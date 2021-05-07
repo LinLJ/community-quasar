@@ -6,7 +6,7 @@
       </div>
       <div class="col-4 q-px-xs q-py-lg">
         <tdf-box class="text-h6" showBorder content="最新发布文章">
-          <tdf-list rounded :list="lastestArtical"></tdf-list>
+          <tdf-list rounded :list="lastestArtical"></tdf-list>   
         </tdf-box>
       </div>
     </div>

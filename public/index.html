@@ -5,12 +5,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title><%= htmlWebpackPlugin.options.title %></title>
+    <link rel="stylesheet" href="<%= BASE_URL %>editormd/css/editormd.min.css">
+    <title>太极开发者社区</title>
   </head>
   <body>
     <noscript>
-      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+      <strong>浏览器没有启用JavaScript，当前网页无法正常工作。</strong>
     </noscript>
+    <script src="<%= BASE_URL %>editormd/jquery.min.js"></script>
+    <script src="<%= BASE_URL %>editormd/lib/marked.min.js"></script>
+    <script src="<%= BASE_URL %>editormd/lib/prettify.min.js"></script>
+    <!-- <script src="<%= BASE_URL %>editormd/lib/raphael.min.js"></script>
+    <script src="<%= BASE_URL %>editormd/lib/underscore.min.js"></script>
+    <script src="<%= BASE_URL %>editormd/lib/sequence-diagram.min.js"></script>
+    <script src="<%= BASE_URL %>editormd/lib/flowchart.min.js"></script>
+    <script src="<%= BASE_URL %>editormd/lib/jquery.flowchart.min.js"></script> -->
+    <script src="<%= BASE_URL %>editormd/editormd.js"></script>
     <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>

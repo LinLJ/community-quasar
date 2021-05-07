@@ -22,8 +22,7 @@
           <q-icon class="show-border q-pa-sm text-h6" :name="evaStar"></q-icon>
         </span>
       </div>
-
-      <div>{{data.contentInfo.content}}</div>
+      <md-editor-view :md-content="data.contentInfo.content"></md-editor-view>
 
       <div>13</div>
     </div>
