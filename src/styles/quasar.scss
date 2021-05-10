@@ -7,21 +7,75 @@
     max-width: 1200px;
     margin: 0 auto;
   }
-  
+  .pc-personal-screan-width {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
 }
 @media screen and (max-width: $breakpoint-sm-max) {
   .show-menu-tags {
-    display:none
+    display: none;
   }
-  
+}
+.margin-auto {
+  margin: 0 auto;
 }
 
-  
+.height-auto {
+  height: auto;
+}
+.height-100 {
+  height: 100%;
+}
+.width-auto {
+  width: auto;
+}
+.width-100 {
+  width: 100%;
+}
+.hw-aoto {
+  height: auto;
+  width: auto;
+}
+.hw-100 {
+  height: 100%;
+  width: 100%;
+}
+.h-auto-w-100 {
+  height: auto;
+  width: 100%;
+}
+.h-100-w-auto {
+  height: 100%;
+  width: auto;
+}
+.title-height {
+  height: 150px;
+}
+.avatar-height {
+  height: 100px;
+}
+.white-back {
+  background: white;
+}
+.grey-back {
+  background: #fafafa;
+}
+
+.show-border{
+  border: 1px solid rgba(86,61,124,.2)
+}
+
+//a标签取消下划线
+.a-decoration-none{
+  text-decoration:none
+}
+
+
 // @media screen and (max-width: $breakpoint-md-min) {
 //   .pc-screan-width {
 //     max-width: 1200px;
 //     margin: 0 auto;
 //   }
-  
-// }
 
+// }

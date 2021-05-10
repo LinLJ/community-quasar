@@ -16,13 +16,12 @@
           v-show="!showSearch"
         >
           <q-route-tab
-            class="col"
+            class="col q-pa-none"
             v-for="item in navigation"
             :key="item.path"
             :name="item.meta.title"
             :label="item.meta.title"
             :exact="item.exact"
-            :icon="item.icon"
             :to="item.path"
           />
         </q-tabs>

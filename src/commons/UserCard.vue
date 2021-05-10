@@ -7,20 +7,20 @@
       <q-item>
         <q-item-section avatar>
           <q-avatar square>
-            <img src="https://cdn.quasar.dev/img/avatar2.jpg" />
+            <img :src="personal.avatar ? personal.avatar : img_avatar" />
           </q-avatar>
         </q-item-section>
 
         <q-item-section>
-          <q-item-label>林炼钧</q-item-label>
-          <q-item-label caption>404 未读消息</q-item-label>
+          <q-item-label>{{ personal.userName }}</q-item-label>
+          <q-item-label caption>{{ personal.unreadNotifies }}未读消息</q-item-label>
         </q-item-section>
       </q-item>
       <q-separator inset />
       <q-card-actions horizontal>
         <q-item-section>
           <q-item-label caption class="text-center text-indigo-12"
-            >12</q-item-label
+            >{{ personal.followerCount}}</q-item-label
           >
           <q-item-label caption class="text-center text-weight-bolder"
             >关注</q-item-label
@@ -29,7 +29,7 @@
         <q-separator vertical />
         <q-item-section>
           <q-item-label caption class="text-center text-indigo-12"
-            >3</q-item-label
+            >{{ personal.followedCount}}</q-item-label
           >
           <q-item-label caption class="text-center text-weight-bolder"
             >粉丝</q-item-label
@@ -38,7 +38,7 @@
         <q-separator vertical />
         <q-item-section>
           <q-item-label caption class="text-center text-indigo-12"
-            >17</q-item-label
+            >{{ personal.blogCount}}</q-item-label
           >
           <q-item-label caption class="text-center text-weight-bolder"
             >博客</q-item-label
@@ -47,7 +47,7 @@
         <q-separator vertical />
         <q-item-section>
           <q-item-label caption class="text-center text-indigo-12"
-            >6</q-item-label
+            >{{ personal.postCount}}</q-item-label
           >
           <q-item-label caption class="text-center text-weight-bolder"
             >帖子</q-item-label
@@ -56,7 +56,7 @@
         <q-separator vertical />
         <q-item-section>
           <q-item-label caption class="text-center text-indigo-12"
-            >15</q-item-label
+            >{{ personal.forumCount}}</q-item-label
           >
           <q-item-label caption class="text-center text-weight-bolder"
             >小组</q-item-label
@@ -65,7 +65,7 @@
         <q-separator vertical />
         <q-item-section>
           <q-item-label caption class="text-center text-indigo-12"
-            >21</q-item-label
+            >{{ personal.favoriteCount}}</q-item-label
           >
           <q-item-label caption class="text-center text-weight-bolder"
             >收藏</q-item-label
@@ -75,9 +75,9 @@
       <q-separator inset />
       <q-card-actions>
         <div class="row q-gutter-md">
-          <div class="text-center text-indigo-12 text-body2">积分：236</div>
-          <div class="text-center text-indigo-12">排名：7</div>
-          <div class="text-center text-indigo-12">年度排名：6</div>
+          <div class="text-center text-indigo-12 text-body2">积分：{{ personal.usablePoint }}</div>
+          <div class="text-center text-indigo-12">排名：{{ personal.pointRanking }}</div>
+          <div class="text-center text-indigo-12">年度排名：{{ personal.annualPointRanking }}</div>
         </div>
       </q-card-actions>
     </q-card>
@@ -85,11 +85,41 @@
 </template>
 
 <script>
+import img_avatar from '@/assets/avatar.png'
+
 export default {
   name: 'TdfUserCard',
   props: {
-
+    personal: {
+      blogCount: 0,
+      postUrl: undefined,
+      usablePoint: 0,
+      avatarUrl: undefined,
+      followedUrl: undefined,
+      orderList: '',
+      avatar: undefined,
+      userName: undefined,
+      pointRanking: undefined,
+      annualPointRanking: undefined,
+      annualPoint: undefined,
+      totalPoint: undefined,
+      favoriteUrl: undefined,
+      followedCount: 0,
+      blogUrl: undefined,
+      unreadNotifiesURL: undefined,
+      postCount: 0,
+      forumUrl: undefined,
+      forumCount: 0,
+      followerCount: 0,
+      unreadNotifies: 0,
+      favoriteCount: 0,
+    },
   },
+  data(){
+    return {
+      img_avatar
+    }
+  }
 }
 </script>
 

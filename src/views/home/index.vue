@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="row q-pt-xs" >
+    <div class="row q-pt-xs">
       <div class="col-12 col-md-8 q-pl-lg">
         <tdf-news-carousel
           height="200px"
@@ -19,7 +19,13 @@
         <q-separator inset />
         <tdf-page-cards :list="achievement" img="top"></tdf-page-cards>
 
-        <tdf-box class="text-h6" showBorder showDownward showHeight="360px" content="讨论组">
+        <tdf-box
+          class="text-h6"
+          showBorder
+          showDownward
+          showHeight="360px"
+          content="讨论组"
+        >
           <tdf-page-cards :list="forumGroups" img="left"></tdf-page-cards>
         </tdf-box>
         <tdf-box class="text-h6" content="最新话题">
@@ -28,7 +34,7 @@
       </div>
 
       <div v-if="!$q.platform.is.mobile" class="col-md-4 q-pr-lg">
-        <tdf-user-card />
+        <tdf-user-card v-if="isLogin" :personal="personal" />
         <tdf-box class="text-h6" showBorder content="社区排行榜"></tdf-box>
         <tdf-box class="text-h6" showBorder content="博客推荐">
           <tdf-list rounded :list="recommendBlogs"></tdf-list>
@@ -42,6 +48,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 import {
   getInfolinksByAchievements,
   getInfolinksByAdvertisings,
@@ -51,6 +59,8 @@ import {
   getRecommendBlogs,
   getNewestBlogs,
 } from '@/api/home'
+import { getPersonalInfo } from '@/api/personal'
+
 export default {
   data() {
     return {
@@ -60,6 +70,7 @@ export default {
       newestBlogs: [],
       newestForums: [],
       forumGroups: [],
+      personal: {},
     }
   },
   created() {
@@ -69,6 +80,10 @@ export default {
     this.getNewestBlogs()
     this.getNewestForums()
     this.getForumGroups()
+    this.getPersonalInfo()
+  },
+  computed: {
+    ...mapGetters(['isLogin']),
   },
   methods: {
     getAdvertising() {
@@ -126,6 +141,13 @@ export default {
       getForumGroups()
         .then((response) => {
           this.forumGroups = response.data
+        })
+        .catch(() => {})
+    },
+    getPersonalInfo() {
+      getPersonalInfo()
+        .then((response) => {
+          this.personal = response.data
         })
         .catch(() => {})
     },

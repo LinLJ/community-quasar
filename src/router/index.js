@@ -188,6 +188,16 @@ const routerMap = [
     name: 'BlogEdit',
     component: () => import('@/views/blog/BlogPublish'),
   },
+  {
+    path: '/space',
+    component: Layout,
+    redirect: '/space/index',
+    children: [{
+      path: 'index/:id',
+      name: 'space',
+      component: () => import('@/views/personal/Space'),
+    }]
+  },
   { path: '/ssologin', component: () => import('@/views/ssologin/index') },
 ]
 

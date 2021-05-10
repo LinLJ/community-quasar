@@ -1,13 +1,13 @@
 <template>
-  <div class=")	q-px-md">
+  <div class="q-px-sm">
     <div class="show-border my-box column">
-      <div class="col-2 text-subtitle1 text-weight-bold text-grey-14">
+      <div class="col-2 text-subtitle1 text-weight-bold text-grey-14 width-auto">
         <router-link target="_blank" :title="body.title" :to="{ name: 'blogView', params: { id: body.id } }">
           {{ body.title }}
         </router-link>
         
       </div>
-      <div class="col-1 q-pt-md text-grey-14">
+      <div v-if="body.originalFlag!=null" class="col-1 q-pt-md text-grey-14">
         <span  class="show-border">{{ body.originalFlag === 0 ? '原创' : '转载' }}</span>
         <span>{{ body.updateTime }}</span>
         <router-link target="_blank" :to="{ name: 'space', params: { id: body.userId }}"><span>{{ body.userName }}</span></router-link>
@@ -15,7 +15,7 @@
         <span>访问数 {{ body.readCount }}</span>
         <span> 评论数{{ body.replyCount }}</span>
       </div>
-      <div class="col-9 cut-text q-pt-md text-grey-14">{{ body.content }}</div>
+      <div class="col-9 cut-text q-pt-md text-grey-14 " style="width:100%">{{ body.content }}</div>
     </div>
   </div>
 </template>
