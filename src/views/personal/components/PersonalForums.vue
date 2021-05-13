@@ -2,7 +2,7 @@
   <div class="q-pa-md row q-col-gutter-md">
     <div class="col-6" v-for="item in forums" :key="item.id || item.name">
       <router-link :to="item.baseUrl" class="a-decoration-none">
-        <q-card :class="[`card-img-left`]">
+        <q-card flat  bordered :class="[`card-img-left`]">
           <div class="row">
             <div class="col-4">
               <img :src="item.forumLog" :class="[`img-location-left`]" />

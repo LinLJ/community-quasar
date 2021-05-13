@@ -84,7 +84,7 @@
 <script>
 import img_avatar from '@/assets/avatar.png'
 // import { VueCropper } from 'vue-cropper'
-import { validateMobile, validateID } from '@/utils/validate'
+// import { validateMobile, validateID } from '@/utils/validate'
 import { getSettingInfo, userSetting } from '@/api/personal'
 
 export default {

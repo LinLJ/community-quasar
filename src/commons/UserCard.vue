@@ -13,60 +13,62 @@
 
         <q-item-section>
           <q-item-label>{{ personal.userName }}</q-item-label>
-          <q-item-label caption>{{ personal.unreadNotifies }}未读消息</q-item-label>
+          <q-item-label caption
+            >{{ personal.unreadNotifies }}未读消息</q-item-label
+          >
         </q-item-section>
       </q-item>
       <q-separator inset />
       <q-card-actions horizontal>
         <q-item-section>
-          <q-item-label caption class="text-center text-indigo-12"
-            >{{ personal.followerCount}}</q-item-label
-          >
+          <q-item-label caption class="text-center text-indigo-12">{{
+            personal.followerCount
+          }}</q-item-label>
           <q-item-label caption class="text-center text-weight-bolder"
             >关注</q-item-label
           >
         </q-item-section>
         <q-separator vertical />
         <q-item-section>
-          <q-item-label caption class="text-center text-indigo-12"
-            >{{ personal.followedCount}}</q-item-label
-          >
+          <q-item-label caption class="text-center text-indigo-12">{{
+            personal.followedCount
+          }}</q-item-label>
           <q-item-label caption class="text-center text-weight-bolder"
             >粉丝</q-item-label
           >
         </q-item-section>
         <q-separator vertical />
         <q-item-section>
-          <q-item-label caption class="text-center text-indigo-12"
-            >{{ personal.blogCount}}</q-item-label
-          >
+          <q-item-label caption class="text-center text-indigo-12">{{
+            personal.blogCount
+          }}</q-item-label>
           <q-item-label caption class="text-center text-weight-bolder"
             >博客</q-item-label
           >
         </q-item-section>
         <q-separator vertical />
         <q-item-section>
-          <q-item-label caption class="text-center text-indigo-12"
-            >{{ personal.postCount}}</q-item-label
-          >
+          <q-item-label caption class="text-center text-indigo-12">{{
+            personal.postCount
+          }}</q-item-label>
           <q-item-label caption class="text-center text-weight-bolder"
             >帖子</q-item-label
           >
         </q-item-section>
         <q-separator vertical />
         <q-item-section>
-          <q-item-label caption class="text-center text-indigo-12"
-            >{{ personal.forumCount}}</q-item-label
-          >
+          <q-item-label caption class="text-center text-indigo-12">{{
+            personal.forumCount
+          }}</q-item-label>
           <q-item-label caption class="text-center text-weight-bolder"
             >小组</q-item-label
           >
         </q-item-section>
         <q-separator vertical />
         <q-item-section>
-          <q-item-label caption class="text-center text-indigo-12"
-            >{{ personal.favoriteCount}}</q-item-label
-          >
+          <q-item-label caption class="text-center text-indigo-12">{{
+            personal.favoriteCount
+          }}</q-item-label>
           <q-item-label caption class="text-center text-weight-bolder"
             >收藏</q-item-label
           >
@@ -75,9 +77,18 @@
       <q-separator inset />
       <q-card-actions>
         <div class="row q-gutter-md">
-          <div class="text-center text-indigo-12 text-body2">积分：{{ personal.usablePoint }}</div>
-          <div class="text-center text-indigo-12">排名：{{ personal.pointRanking }}</div>
-          <div class="text-center text-indigo-12">年度排名：{{ personal.annualPointRanking }}</div>
+          <div class="text-center text-indigo-12 text-body2">
+            积分：{{ personal.usablePoint }}
+            <q-tooltip> Todo </q-tooltip>
+          </div>
+          <div class="text-center text-indigo-12">
+            排名：{{ personal.pointRanking }}
+            <q-tooltip> Todo </q-tooltip>
+          </div>
+          <div class="text-center text-indigo-12">
+            年度排名：{{ personal.annualPointRanking }}
+            <q-tooltip> Todo </q-tooltip>
+          </div>
         </div>
       </q-card-actions>
     </q-card>
@@ -115,11 +126,11 @@ export default {
       favoriteCount: 0,
     },
   },
-  data(){
+  data() {
     return {
-      img_avatar
+      img_avatar,
     }
-  }
+  },
 }
 </script>
 

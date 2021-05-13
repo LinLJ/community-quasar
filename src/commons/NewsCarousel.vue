@@ -9,8 +9,9 @@
         control-color="white"
         :autoplay="autoplay"
         padding
-        arrows
+        :arrows="arrows"
         infinite
+        :navigation="navigation"
         :height="height"
         class="bg-primary text-white shadow-1 rounded-borders"
       >
@@ -61,6 +62,14 @@ export default {
       default: false,
     },
     titleShadow: {
+      type: Boolean,
+      default: false,
+    },
+    navigation: {
+      type: Boolean,
+      default: false,
+    },
+    arrows: {
       type: Boolean,
       default: false,
     },

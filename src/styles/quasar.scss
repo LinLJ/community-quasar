@@ -52,8 +52,15 @@
 .title-height {
   height: 150px;
 }
+.btn-hw {
+  max-height: 35px;
+  width: 250px;
+}
 .avatar-height {
   height: 100px;
+}
+.forum-height {
+  height: 60px;
 }
 .white-back {
   background: white;
@@ -62,15 +69,14 @@
   background: #fafafa;
 }
 
-.show-border{
-  border: 1px solid rgba(86,61,124,.2)
+.show-border {
+  border: 1px solid rgba(86, 61, 124, 0.2);
 }
 
 //a标签取消下划线
-.a-decoration-none{
-  text-decoration:none
+.a-decoration-none {
+  text-decoration: none;
 }
-
 
 // @media screen and (max-width: $breakpoint-md-min) {
 //   .pc-screan-width {
@@ -79,3 +85,13 @@
 //   }
 
 // }
+
+// 修改 q-input dense 模式框的高度
+.q-field--dense .q-field__control, .q-field--dense .q-field__marginal {
+  height: $input-dense-height;
+}
+
+// 修改 q-input dense 模式下拉框的高度
+.q-field--auto-height.q-field--dense .q-field__control, .q-field--auto-height.q-field--dense .q-field__native {
+  min-height: $input-dense-height;
+}

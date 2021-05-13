@@ -7,6 +7,7 @@
           titleText="text-h6"
           showTitle
           titleShadow
+          arrows
           :list="advertising"
         ></tdf-news-carousel>
         <q-separator inset />

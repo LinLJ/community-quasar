@@ -10,7 +10,7 @@
       v-for="item in list"
       :key="item.id || item.name"
     >
-      <q-card :class="[`card-img-${img}`]">
+      <q-card flat  bordered :class="[`card-img-${img}`]">
         <img
           v-if="img === 'top'"
           :src="item.pic"

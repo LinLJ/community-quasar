@@ -1,5 +1,5 @@
 <template>
-  <div>share</div>
+  <router-view></router-view>
 </template>
 
 <script>

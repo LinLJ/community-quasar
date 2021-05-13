@@ -75,18 +75,18 @@ export const navRouter = [
             component: () => import('@/views/forum/ForumList'),
             meta: { title: '讨论组列表' },
           },
-          // {
-          //   path: 'view/:id',
-          //   name: 'forumView',
-          //   component: () => import('@/views/forum/ForumView'),
-          //   meta: { title: '讨论组详情' },
-          // },
-          // {
-          //   path: 'postView/:id',
-          //   name: 'forumPostView',
-          //   component: () => import('@/views/forum/PostView'),
-          //   meta: { title: '帖子详情' },
-          // },
+          {
+            path: 'view/:id',
+            name: 'forumView',
+            component: () => import('@/views/forum/ForumView'),
+            meta: { title: '讨论组详情' },
+          },
+          {
+            path: 'postView/:id',
+            name: 'forumPostView',
+            component: () => import('@/views/forum/PostView'),
+            meta: { title: '帖子详情' },
+          },
         ],
       },
       {
@@ -102,18 +102,18 @@ export const navRouter = [
             component: () => import('@/views/faq/FaqList'),
             meta: { title: '问答列表' },
           },
-          // {
-          //   path: 'view/:id',
-          //   name: 'faqView',
-          //   component: () => import('@/views/faq/FaqView'),
-          //   meta: { title: '问答详情' },
-          // },
-          // {
-          //   path: 'guide',
-          //   name: 'faqGuide',
-          //   component: () => import('@/views/faq/FaqGuide'),
-          //   meta: { title: '问答指引' },
-          // },
+          {
+            path: 'view/:id',
+            name: 'faqView',
+            component: () => import('@/views/faq/FaqView'),
+            meta: { title: '问答详情' },
+          },
+          {
+            path: 'guide',
+            name: 'faqGuide',
+            component: () => import('@/views/faq/FaqGuide'),
+            meta: { title: '问答指引' },
+          },
         ],
       },
       {
@@ -127,10 +127,10 @@ export const navRouter = [
             path: 'list',
             component: () => import('@/views/share/ShareList'),
           },
-          // {
-          //   path: 'view/:id',
-          //   component: () => import('@/views/share/ShareView'),
-          // },
+          {
+            path: 'view/:id',
+            component: () => import('@/views/share/ShareView'),
+          },
         ],
       },
       {
@@ -189,6 +189,16 @@ const routerMap = [
     component: () => import('@/views/blog/BlogPublish'),
   },
   {
+    path: '/forum/post/new/:id',
+    name: 'ForumPostNew',
+    component: () => import('@/views/forum/PostNew')
+  },
+  {
+    path: '/forum/post/edit/:id',
+    name: 'ForumPostEdit',
+    component: () => import('@/views/forum/PostEdit')
+  },
+  {
     path: '/space',
     component: Layout,
     redirect: '/space/index',
@@ -198,7 +208,23 @@ const routerMap = [
       component: () => import('@/views/personal/Space'),
     }]
   },
+  {
+    path: '/search',
+    component: Layout,
+    redirect: '/search/index',
+    children: [{
+      path: 'index',
+      name: 'search',
+      component: () => import('@/views/search/index'),
+    }]
+  },
   { path: '/ssologin', component: () => import('@/views/ssologin/index') },
+  {
+    path: '/faq/new',
+    name: 'FaqNew',
+    component: () => import('@/views/faq/FaqPublish'),
+    meta: { title: '问答新增', requireLogin: true }
+  },
 ]
 
 export default new Router({
