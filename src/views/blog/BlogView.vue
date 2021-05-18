@@ -1,24 +1,26 @@
 <template>
   <div>
     <div class="row q-pt-xs">
-      <div class="col-8 q-px-xs q-py-lg">
+      <div class="col-12 col-md-8 q-px-xs q-py-lg">
         <div class="q-pa-md">
           <div class="q-pa-sm column title-box show-border">
             <div class="text-center text-h5 q-pt-xl">
               {{ blog.contentInfo.title }}
               <span v-if="isAuthor" class="q-px-xs">
                 <q-icon
+                  @click="handleEdit(blog.contentInfo.id)"
                   class="show-border q-pa-sm text-h6"
                   :name="evaEditOutline"
                 ></q-icon>
               </span>
               <span v-if="isAuthor" class="q-px-xs">
                 <q-icon
+                  @click="handleDel(blog.contentInfo.id)"
                   class="show-border q-pa-sm text-h6"
                   :name="evaTrash2Outline"
                 ></q-icon>
               </span>
-              <span v-if="false" class="q-px-xs">
+              <!-- <span v-if="false" class="q-px-xs">
                 <q-icon
                   class="show-border q-pa-sm text-h6"
                   :name="evaHeartOutline"
@@ -29,15 +31,17 @@
                   class="show-border q-pa-sm text-h6"
                   :name="evaHeart"
                 ></q-icon>
-              </span>
+              </span> -->
               <span v-if="!blog.isFaved" class="q-px-xs">
                 <q-icon
+                  @click="handleCollect(blog.contentInfo.id)"
                   class="show-border q-pa-sm text-h6"
                   :name="evaStarOutline"
                 ></q-icon>
               </span>
               <span v-if="blog.isFaved" class="q-px-xs">
                 <q-icon
+                  @click="handleCollect(blog.contentInfo.id)"
                   class="show-border q-pa-sm text-h6"
                   :name="evaStar"
                 ></q-icon>
@@ -76,13 +80,21 @@
 
             <q-separator class="q-mb-md" inset />
             <div class="q-px-sm">
-              <tdf-md-editor
-                :config="config"
-                :init-md-content="replyComment.content"
-              ></tdf-md-editor>
+              <q-form ref="commentForm">
+                <tdf-md-editor
+                  :config="config"
+                  :init-md-content="replyComment.content"
+                  ref="editor"
+                ></tdf-md-editor>
+              </q-form>
             </div>
             <div class="q-pr-sm">
-              <q-btn class="float-right" color="primary" label="评论" />
+              <q-btn
+                @click="handleAddComment"
+                class="float-right"
+                color="primary"
+                label="评论"
+              />
             </div>
             <div class="q-pl-sm">共{{ comment.commentCount }}条评论</div>
             <div>
@@ -100,6 +112,16 @@
                     {{ item.userName }}
                     {{ item.updateTime }}
                     <md-editor-view :md-content="item.content" />
+                    <span
+                      v-if="userInfo.userId === item.userId"
+                      class="q-px-xs"
+                    >
+                      <q-icon
+                        @click="handleDeleteComment(item.id)"
+                        class="show-border q-pa-sm text-h6"
+                        :name="evaTrash2Outline"
+                      ></q-icon>
+                    </span>
                   </div>
                 </div>
               </tdf-scroll-load>
@@ -107,22 +129,44 @@
           </div>
         </div>
       </div>
-      <div class="col-4 q-px-xs q-py-lg">
+      <div v-if="!$q.screen.lt.md" class="col-md-4 q-px-xs q-py-lg">
         <tdf-box class="text-h6" showBorder content="最新发布文章">
-          <tdf-list rounded :list="lastestArtical"></tdf-list>
+          <tdf-list rounded :list="lastestArtical" type="blog"></tdf-list>
         </tdf-box>
       </div>
+
+      <q-dialog v-model="delDialog">
+        <q-card style="width: 300px">
+          <q-card-section>
+            <div class="text-h6">确认删除？</div>
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn
+              flat
+              label="确认"
+              @click="confirmDel"
+              color="primary"
+              v-close-popup
+            />
+            <q-btn flat label="取消" color="primary" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </div>
   </div>
 </template>
 
 <script>
 import {
-  getBlogComment,
-  isAuthor,
-  thumbup,
-  getLastReply,
   getBlog,
+  getBlogComment,
+  getLastReply,
+  addComment,
+  isAuthor,
+  delBlog,
+  collect,
+  thumbup,
+  delComment,
 } from '@/api/blog'
 import { getPersonalInfo } from '@/api/personal'
 
@@ -135,11 +179,16 @@ import {
   evaEditOutline,
 } from '@quasar/extras/eva-icons'
 import { matThumbUp } from '@quasar/extras/material-icons'
-import { Notify } from 'quasar'
+import { login } from '@/utils/oauthLogin'
+import { mapGetters } from 'vuex'
 
 export default {
   data() {
     return {
+      confirmDialogType: 'blog',
+      confirmDelId: '',
+      delDialog: false,
+      userInfo: {},
       lastestArtical: [],
       lastReplyLoading: false,
       blogLoading: false,
@@ -195,6 +244,12 @@ export default {
       },
     }
   },
+  computed: {
+    isDesktop() {
+      return this.$store.getters.device === 'desktop'
+    },
+    ...mapGetters(['isLogin']),
+  },
   created() {
     this.getBlog(this.$route.params.id)
     this.getLastReply()
@@ -206,9 +261,14 @@ export default {
     this.evaEditOutline = evaEditOutline
     this.matThumbUp = matThumbUp
     this.commentQuery.id = this.$route.params.id
-
+    this.$on('isLogin', () => {
+      if (!this.isLogin) {
+        login(this.$route.fullPath)
+      }
+    })
     if (this.isLogin) {
       // 登陆回来 获取相关信息
+
       this.judgeIsAuthor(this.$route.params.id)
       this.getPersonalInfo() // 个人信息
     }
@@ -223,15 +283,8 @@ export default {
         .catch(() => {})
     },
     handleThumbUp() {
-      // Notify.create('22')
-      console.log(this.$q, 'this.$q')
-      console.log(Notify, 'Notify')
-      console.log(Notify.create(), 'Notify')
-      Notify.create({
-        message: 'Danger, Will Robinson! Danger!',
-      })
-      console.log('-------------------------------------------')
       if (this.blog.isThumbedUp) {
+        this.$q.notify('亲，每人只能点赞一次哦')
         // this.$_message.info('亲，每人只能点赞一次哦')
       } else {
         this.thumbLoading = true
@@ -242,7 +295,7 @@ export default {
         }
         thumbup(obj)
           .then(() => {
-            // this.$_message.success('点赞成功')
+            this.$q.notify('点赞成功')
 
             this.getBlog(this.$route.params.id)
           })
@@ -310,6 +363,92 @@ export default {
         commentList: [],
       }
       this.getBlogComment() // 从头重新获取
+    },
+    handleAddComment() {
+      this.replyComment.content = this.$refs.editor.getValue()
+
+      this.$emit('isLogin')
+      this.addLoading = true
+      this.replyComment.blogId = this.$route.params.id
+      if (this.replyComment.content.length < 5) {
+        this.$q.notify('评论不能少于5个字')
+      } else {
+        addComment(this.replyComment)
+          .then(() => {
+            this.$refs.editor.setValue('')
+            this.refreshComment()
+            this.addLoading = false
+            this.$q.notify('评论成功')
+          })
+          .catch(() => {
+            this.addLoading = false
+          })
+      }
+
+      // this.$refs.commentForm.validate(valid => {
+      //   if (valid) {
+      //     this.$emit('isLogin')
+      //     this.addLoading = true
+      //     this.replyComment.blogId = this.$route.params.id
+      //     addComment(this.replyComment).then(() => {
+      //       this.$refs.editor.setValue('')
+      //       this.refreshComment()
+      //       this.addLoading = false
+      //     }).catch(() => {
+      //       this.addLoading = false
+      //     })
+      //   }
+      // })
+    },
+    handleEdit(id) {
+        let routeUrl = this.$router.resolve({
+          name: 'BlogEdit',
+          params: {id}
+        })
+        window.open(routeUrl.href, '_blank')
+      },
+    handleDeleteComment(id) {
+      this.confirmDelId = id
+      this.delDialog = true
+      this.confirmDialogType = 'comment'
+    },
+    confirmDel() {
+      if (this.confirmDelId) {
+        if (this.confirmDialogType === 'comment') {
+          delComment({ id: this.confirmDelId }).then(() => {
+            this.$q.notify('删除评论成功')
+            // this.$_message.success('删除评论成功')
+            this.refreshComment()
+          })
+        } else if (this.confirmDialogType === 'blog') {
+          this.blogDelLoading = true
+          delBlog(this.confirmDelId).then(() => {
+            this.$q.notify('删除成功')
+            this.$router.push({
+              name: 'blogList',
+            })
+            this.blogDelLoading = false
+          })
+          // this.cancelButtonClass()
+        }
+      }
+    },
+    handleDel(id) {
+      this.confirmDelId = id
+      this.delDialog = true
+      this.confirmDialogType = 'blog'
+    },
+    handleCollect(id) {
+      const obj = {
+        category: 'blog',
+        id,
+        state: Number(!this.blog.isFaved),
+      }
+      collect(obj).then(() => {
+        obj.state ? this.$q.notify('收藏成功') : this.$q.notify('取消收藏成功')
+
+        this.getBlog(id)
+      })
     },
   },
 }

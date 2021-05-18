@@ -1,21 +1,34 @@
 <template>
   <q-layout view="hHh lpR fFf" >
     <q-header
-      reveal
       elevated
       class="bg-white text-grey-8 q-py-xs"
       height-hint="58"
     >
-      <Header />
+      <Header/>
     </q-header>
     <q-page-container>
       <Container />
       <Footer />
     </q-page-container>
+    <q-footer class="bg-white small-screen-only">
+      <q-tabs
+        class="text-grey-10"
+        active-color="primary"
+        indicator-color="transparent"
+      >
+        <q-route-tab :icon="evaTextOutline" label="首页" to="/" />
+        <q-route-tab :icon="evaGridOutline" label="成果" to="/share" />
+        <q-route-tab :icon="evaCompassOutline" label="博客" to="/blog" />
+        <q-route-tab :icon="evaPersonOutline" label="我" to="/personal" />
+      </q-tabs>
+    </q-footer>
   </q-layout>
 </template>
 
 <script>
+import { evaHomeOutline, evaCameraOutline,evaCompassOutline,evaPersonOutline,evaTextOutline,evaGridOutline } from '@quasar/extras/eva-icons'
+
 import { Header, Container, Footer } from './components'
 import { mapGetters } from 'vuex'
 
@@ -77,6 +90,12 @@ export default {
     ...mapGetters(['isLogin']),
   },
   created() {
+    this.evaHomeOutline = evaHomeOutline
+    this.evaCameraOutline = evaCameraOutline
+    this.evaCompassOutline=evaCompassOutline
+    this.evaPersonOutline = evaPersonOutline
+    this.evaTextOutline = evaTextOutline
+    this.evaGridOutline=evaGridOutline
     this.fabYoutube = fabYoutube
     this.$store.dispatch('UpdateNav', this.isLogin)
   },

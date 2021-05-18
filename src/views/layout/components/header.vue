@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-toolbar>
+    <q-toolbar class="normal-screen-only">
       <q-btn flat no-caps no-wrap class="q-ml-xs" v-if="$q.screen.gt.xs">
         <q-img
           :src="img_logo"
@@ -12,7 +12,7 @@
       <div class="YL__toolbar-input-container row no-wrap">
         <q-tabs
           exact="false"
-          class="router-tag-width row  show-menu-tags"
+          class="router-tag-width row show-menu-tags"
           v-show="!showSearch"
         >
           <q-route-tab
@@ -25,9 +25,6 @@
             :to="item.path"
           />
         </q-tabs>
-
-
-
 
         <q-input
           v-if="showSearch"
@@ -49,12 +46,23 @@
           unelevated
         />
         <q-tabs>
-          <q-tab v-if="!isLogin" name="login" label="登陆" @click="login"> </q-tab>
+          <q-tab v-if="!isLogin" name="login" label="登陆" @click="login">
+          </q-tab>
           <q-tab v-else name="logout" label="注销" @click="logout"> </q-tab>
         </q-tabs>
       </div>
 
       <q-space />
+    </q-toolbar>
+    <q-toolbar class="small-screen-only">
+      <div class="flex jestify-center item-center">
+        <img
+          :src="img_logo"
+          class=""
+          style="height: 70%"
+          spinner-color="white"
+        />
+      </div>
     </q-toolbar>
   </div>
 </template>

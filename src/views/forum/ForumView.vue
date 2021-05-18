@@ -1,44 +1,134 @@
 <template>
   <div class="row q-pt-xs">
-    <div class="col-8 q-pa-lg">
+    <div class="col-12 col-md-8 q-pt-lg">
       <div class="q-pa-md">
         <div class="q-pb-sm text-h6">
-          <a @click="gotoAllForum()">返回全部讨论组</a>
+          <a @click="gotoAllForum()">
+            <q-icon :name="evaUndo"></q-icon>
+            返回全部讨论组</a
+          >
         </div>
 
         <div class="show-border text-h6 q-pa-sm">
           <div class="row">
-            <img class="forum-height col-1" :src="forumInfo.forumLog" />
+            <img class="forum-logo col-1" :src="forumInfo.forumLog" />
             <div class="col-11">
               <div class="text-subtitle2">
-                {{ forumInfo.forumName }} 类别：{{
-                  forumInfo.forumCategoryName
-                }}
+                <span class="text-h6">{{ forumInfo.forumName }}</span>
+                <span class="flex flex-right" style="float: right"
+                  >类别：{{ forumInfo.forumCategoryName }}</span
+                >
               </div>
-              <div class="hw-100 text-body2">
+              <div class="hw-100 text-caption text-grey">
                 {{ forumInfo.forumDescription }}
               </div>
             </div>
           </div>
           <q-separator inset />
-          <div class="row">
-            <div>管理员:{{ forumInfo.userName }}</div>
-            <div v-if="!belongToForum"><q-btn  @click="handleJoin">加入</q-btn></div>
-            <div v-else>
-              <q-btn @click="handleMakePost">发帖</q-btn>
-              <q-btn @click="handleQuit">退出</q-btn>
+          <div style="display: flex; justify-content: space-between">
+            <div class="text-body2 text-grey q-pa-xs">
+              管理员:<a @click="gotoPersonView(forumInfo.userId)"
+                >{{ forumInfo.userName }}
+              </a>
+            </div>
+            <div class="q-pt-xs">
+              <div v-if="!belongToForum">
+                <q-btn color="primary" @click="handleJoin">加入</q-btn>
+              </div>
+              <div v-else>
+                <q-btn color="positive" @click="handleMakePost">发帖</q-btn>
+                <q-btn color="primary" class="q-ml-sm" @click="handleQuit"
+                  >退出</q-btn
+                >
+              </div>
             </div>
           </div>
         </div>
-        <div class="q-pt-md">
-          <div class="show-border q-pt-md">
+        <div class=" left-area">
+          <div class="show-border forum-view-item">
             <tdf-scroll-load
+            ref="scrollLoad"
               :on-touch-bottom="getForumPosts"
               :is-loaded-all="isLastPage"
               class="width-auto q-py-none q-px-xs"
             >
-              <div
-                class="show-border q-py-md q-px-sm favorite"
+              <div class="posts-in-forum">
+                <div
+                  v-for="(item, index) in forumPosts"
+                  :key="index"
+                  class="posts"
+                >
+                  <div class="img">
+                    <img :src="item.avatar" width="100%" />
+                  </div>
+                  <div class="main">
+                    <div class="meta-row">
+                      <router-link
+                        :to="{ name: 'forumPostView', params: { id: item.id } }"
+                        class="title"
+                        >{{ item.title }}
+                        <span v-if="item.stickOrder" class="top">【置顶】</span>
+                        <span v-if="item.validFlag" class="best">【精华】</span>
+                      </router-link>
+                      <span class="blue-name q-mr-md"
+                        ><a @click="gotoPersonView(item.userId)"
+                          >{{ item.userName }}
+                        </a></span
+                      >
+                    </div>
+                    <div v-if="!$q.screen.lt.md" class="meta-row">
+                      <div class="meta-row">
+                        <span class="name">{{ item.createTime }}</span>
+                        <span class="name">访问数:{{ item.readCount }}</span>
+                        <span class="name">回复数{{ item.replyCount }}</span>
+                      </div>
+                      <div v-if="isOwner">
+                        <q-btn flat color="primary" label="管理">
+                          <q-menu>
+                            <q-list style="min-width: 100px">
+                              <q-item clickable v-close-popup>
+                                <q-item-section @click="setTop(item)">{{
+                                  item.stickOrder ? '取消置顶' : '置顶'
+                                }}</q-item-section>
+                              </q-item>
+                              <q-item clickable v-close-popup>
+                                <q-item-section @click="setBest(item)">{{
+                                  item.validFlag ? '取消加精' : '加精'
+                                }}</q-item-section>
+                              </q-item>
+                              <q-item clickable v-close-popup>
+                                <q-item-section @click="delForumPost(item.id)"
+                                  >删帖</q-item-section
+                                >
+                              </q-item>
+                            </q-list>
+                          </q-menu>
+                        </q-btn>
+                        <!-- <el-dropdown trigger="click" @command="handleCommand">
+                          <span class="el-dropdown-link">
+                            管理<i
+                              class="el-icon-arrow-down el-icon--right"
+                            ></i>
+                          </span>
+                          <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item :command="{ index: 0, item }">{{
+                              item.stickOrder ? '取消置顶' : '置顶'
+                            }}</el-dropdown-item>
+                            <el-dropdown-item :command="{ index: 1, item }">{{
+                              item.validFlag ? '取消加精' : '加精'
+                            }}</el-dropdown-item>
+                            <el-dropdown-item :command="{ index: 2, item }"
+                              >删帖</el-dropdown-item
+                            >
+                          </el-dropdown-menu>
+                        </el-dropdown> -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- <div
+                class=" q-px-lg q-py-xs favorite"
                 v-for="(item, index) in forumPosts"
                 :key="index"
               >
@@ -52,34 +142,42 @@
                     <span class="name">{{ item.createTime }}</span>
                     <span class="name">访问数:{{ item.readCount }}</span>
                     <span class="name">回复数{{ item.replyCount }}</span>
-                    
-                    </router-link>
-                    <div class="text-right"><a @click="gotoPersonView(item.userId)">{{ item.userName }} </a></div>
+                  </router-link>
+                  <div class="text-right">
+                    <a @click="gotoPersonView(item.userId)"
+                      >{{ item.userName }}
+                    </a>
+                  </div>
 
-                    <div v-if="isOwner">
- -->
+                  <div v-if="isOwner">
+                    
                     <el-dropdown trigger="click" @command="handleCommand">
                       <span class="el-dropdown-link">
                         管理<i class="el-icon-arrow-down el-icon--right"></i>
                       </span>
-                      <!-- TODO 使用quasar菜单 -->
                       <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item :command="{ index: 0, item }">{{ item.stickOrder ? '取消置顶' : '置顶' }}</el-dropdown-item>
-                        <el-dropdown-item :command="{ index: 1, item }">{{ item.validFlag ? '取消加精' : '加精' }}</el-dropdown-item>
-                        <el-dropdown-item :command="{ index: 2, item }">删帖</el-dropdown-item>
+                        <el-dropdown-item :command="{ index: 0, item }">{{
+                          item.stickOrder ? '取消置顶' : '置顶'
+                        }}</el-dropdown-item>
+                        <el-dropdown-item :command="{ index: 1, item }">{{
+                          item.validFlag ? '取消加精' : '加精'
+                        }}</el-dropdown-item>
+                        <el-dropdown-item :command="{ index: 2, item }"
+                          >删帖</el-dropdown-item
+                        >
                       </el-dropdown-menu>
                     </el-dropdown>
                   </div>
-                  
                 </div>
-              </div>
+                <q-separator inset />
+              </div> -->
             </tdf-scroll-load>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="col-4 q-pa-lg">
+    <div v-if="!$q.screen.lt.md" class="col-md-4 q-pa-lg">
       <tdf-box class="text-h6" showBorder content="小组成员">
         <tdf-scroll-load
           :on-touch-bottom="getFollowers"
@@ -88,7 +186,7 @@
         >
           <div class="row">
             <div
-              class="my-card q-pa-md"
+              class="my-card q-pa-sm"
               v-for="(item, index) in members"
               :key="index"
               :body="item"
@@ -127,6 +225,8 @@ import {
   setTopPost,
 } from '@/api/forum'
 import { getPersonalInfo } from '@/api/personal'
+import { evaUndo } from '@quasar/extras/eva-icons'
+
 export default {
   data() {
     return {
@@ -168,6 +268,7 @@ export default {
     ...mapGetters(['isLogin']),
   },
   created() {
+    this.evaUndo = evaUndo
     this.getForumInfo()
     this.getForumMembers()
     this.$on('isLogin', () => {
@@ -248,6 +349,7 @@ export default {
       joinForum(this.currentId)
         .then(() => {
           this.belongToForum = true
+          this.getForumMembers()
         })
         .catch(() => {})
         .finally(() => {
@@ -259,6 +361,7 @@ export default {
       quitForum(this.currentId)
         .then(() => {
           this.belongToForum = false
+          this.getForumMembers()
         })
         .catch(() => {
           this.$_message.error('退出失败')
@@ -315,7 +418,6 @@ export default {
       this.$refs.scrollLoad.refreshData()
     },
     gotoPersonView(id) {
-      debugger
       this.$router.push({
         name: 'space',
         params: {
@@ -327,4 +429,150 @@ export default {
 }
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+@import '../../styles/variables.scss';
+.mobile {
+  width: 100% !important;
+}
+.left-area {
+  float: left;
+  width: 100%;
+  .forum-return {
+    font-size: $frontSizeBLg;
+    color: $gotoAllForumColor;
+    &:hover {
+      color: $frontPostColor;
+    }
+  }
+  .forum-view-item {
+    padding: 20px;
+    border: 1px solid $borderColor;
+    border-radius: 4px;
+    background-color: $mainBgColor;
+    & + .forum-view-item {
+      margin-top: 20px;
+    }
+  }
+  .header {
+    .info {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid $borderColor;
+      padding-bottom: 10px;
+      .main {
+        width: calc(100% - 10px);
+        display: inline-block;
+        vertical-align: middle;
+        margin-left: 10px;
+        .meta-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          & + .meta-row {
+            margin-top: 5px;
+          }
+          .main-title {
+            font-size: $fontSizeMd;
+            color: $mainColor;
+            font-weight: 600;
+          }
+          .name {
+            font-size: $fontSizeBase;
+            color: $homePostTimeColor;
+          }
+          .blue-name {
+            font-size: $fontSizeBase;
+            color: $frontNameColor;
+          }
+          .forum-qrcode {
+            position: absolute;
+            width: 200px;
+            top: 80px;
+            border: 1px solid $borderColor;
+          }
+        }
+      }
+    }
+    .owner {
+      padding-top: 5px;
+      font-size: $fontSizeBase;
+      color: $frontColor;
+    }
+  }
+  .posts-in-forum {
+    .posts {
+      padding: 10px;
+      border-bottom: 1px solid $borderColor;
+      &:last-child {
+        border-bottom: 0px solid $borderColor;
+      }
+      .img {
+        width: 30px;
+        display: inline-block;
+      }
+      .main {
+        width: calc(100% - 40px);
+        display: inline-block;
+        vertical-align: middle;
+        margin-left: 10px;
+        .meta-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          height: 25px;
+          & + .meta-row {
+            .name + .name {
+              text-indent: 1em;
+            }
+          }
+          .title {
+            font-size: $fontSizeBase;
+            color: $frontPostColor;
+            cursor: pointer;
+            font-weight: 600;
+            &:hover {
+              color: $frontHoverColor;
+            }
+            .top {
+              color: $mainColor;
+            }
+            .best {
+              color: $dangerColor;
+            }
+          }
+          .name {
+            font-size: $fontSizeBase;
+            color: $frontColor;
+          }
+          .blue-name {
+            font-size: $fontSizeBase;
+            color: $frontNameColor;
+          }
+
+          .el-dropdown-link {
+            cursor: pointer;
+            color: #409eff;
+          }
+        }
+      }
+    }
+  }
+}
+.right-area {
+  float: right;
+  width: calc(30% - 20px);
+
+  .members-in-forum {
+    width: 60px;
+    height: 75px;
+    text-align: center;
+    float: left;
+    margin: 5px;
+    cursor: pointer;
+    .name {
+      font-size: $fontSizeSm;
+      color: $memberNameColor;
+    }
+  }
+}
+</style>

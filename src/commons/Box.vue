@@ -1,7 +1,7 @@
 <template>
-  <div class="q-pa-md">
+  <div class="">
     <div class="row">
-      <div class="col-12">
+      <div class="width-100">
         <div class="my-content" :class="[{'show-border':showBorder}]">
           {{ content }}
 
@@ -79,6 +79,8 @@ export default {
   border: 1px solid rgba(86,61,124,.2)
 .my-content
   padding: 10px 15px
+.my-content-small
+  padding: 0px 15px
 .collapse-height
   max-height: 360px
   overflow: hidden

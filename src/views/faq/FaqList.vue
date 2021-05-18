@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="row q-pt-xs">
-      <div class="col-8 q-pl-lg">
+      <div class="col-12 col-md-8">
         <tdf-box class="text-h6" content="热门标签">
           <div :class="[{ 'light-dimmed': tagsLoading }]">
             <tdf-chip
@@ -9,7 +9,7 @@
               :key="item.id"
               :content="item.tagName"
               :num="item.blogNum"
-              @click="clickTag"
+              @click="clickTag(item)"
             ></tdf-chip>
             <tdf-chip
               v-show="tags.length > 0"
@@ -23,17 +23,13 @@
         </tdf-box>
         <q-tab-panel name="question">
           <q-tabs v-model="activeTab" dense align="left" :breakpoint="0">
-            <q-tab name="question" @click="getQuestion" label="最新回答" />
+            <q-tab name="answered" @click="getQuestion" label="最新回答" />
             <q-tab name="toAnswer" @click="getQuestion" label="等待回答" />
             <q-tab name="hotAnswer" @click="getQuestion" label="热门回答" />
           </q-tabs>
           <q-tab-panels v-model="activeTab">
-            <q-tab-panel name="question" class="q-px-none">
-              <tdf-scroll-load
-                :on-touch-bottom="getQuestion"
-                :is-loaded-all="answered.isLast"
-                class="width-auto"
-              >
+            <q-tab-panel name="answered" class="q-px-none">
+              <tdf-scroll-load :on-touch-bottom="getQuestion" :is-loaded-all="answered.isLast">
                 <faq-item
                   v-for="(item, index) in answered.list"
                   :key="index"
@@ -41,7 +37,8 @@
                 />
               </tdf-scroll-load>
             </q-tab-panel>
-            <q-tab-panel name="answer" class="q-px-none">
+            <q-tab-panel name="toAnswer" class="q-px-none">
+              
               <tdf-scroll-load
                 :on-touch-bottom="getQuestion"
                 :is-loaded-all="toAnswer.isLast"
@@ -54,7 +51,8 @@
                 />
               </tdf-scroll-load>
             </q-tab-panel>
-            <q-tab-panel name="questionFollow" class="q-px-none">
+            <q-tab-panel name="hotAnswer" class="q-px-none">
+              
               <tdf-scroll-load
                 :on-touch-bottom="getQuestion"
                 :is-loaded-all="hotAnswer.isLast"
@@ -71,7 +69,7 @@
         </q-tab-panel>
       </div>
 
-      <div class="col-4 q-pa-lg">
+      <div v-if="!$q.screen.lt.md" class="col-md-4 q-pa-lg">
         <div class="q-pa-md">
           <router-link :to="{ name: 'faqGuide' }">
             <q-btn
@@ -153,7 +151,7 @@ export default {
   },
   created() {
     this.getTags()
-    this.getQuestion()
+    // this.getQuestion()
     document.title = '问答 - 太极开发者社区'
   },
   methods: {
@@ -176,6 +174,7 @@ export default {
           obj.listQuery.page++
           obj.list.push(...response.data.content)
           obj.isLast = response.data.isLast
+          console.info(this.answered,this.toAnswer,this.hotAnswer)
         })
         .catch((err) => {
           throw err

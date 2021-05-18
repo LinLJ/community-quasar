@@ -91,6 +91,10 @@ export default {
     },
     publishPost() {
       this.post.content = this.$refs.editor.getValue()
+      if(this.post.content.length<5){
+        this.$q.notify("帖子字数不能少于5个")
+        return
+      }
 
       if (this.post.userId) {
         this.publishLoading = true

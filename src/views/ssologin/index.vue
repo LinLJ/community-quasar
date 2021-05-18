@@ -25,7 +25,7 @@ export default {
         await bindTDFUaaUser(userRes.data)
         this.getUserRoleAfterBindUser()
         setLoginMessage()
-        debugger
+        
         if (tokenRes.data instanceof Object) {
           // 如果是通过统一认证服务登录
           tokenRes.data.create_timestamp = new Date().getTime()// 时间戳，精确到了毫秒

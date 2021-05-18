@@ -3,6 +3,8 @@ import TdfRouteTag from '@/commons/RouteTag.vue'
 import TdfUserCard from '@/commons/UserCard.vue'
 import TdfNewsCarousel from '@/commons/NewsCarousel.vue'
 import TdfPageCards from '@/commons/PageCards.vue'
+import TdfPageCardsForShare from '@/commons/PageCardsForShare.vue'
+import TdfPageCardsForForum from '@/commons/PageCardsForForum.vue'
 
 import TdfBox from '@/commons/Box.vue'
 import TdfList from '@/commons/List.vue'
@@ -20,6 +22,8 @@ Vue.component(TdfRouteTag.name, TdfRouteTag)
 Vue.component(TdfUserCard.name, TdfUserCard)
 Vue.component(TdfNewsCarousel.name, TdfNewsCarousel)
 Vue.component(TdfPageCards.name, TdfPageCards)
+Vue.component(TdfPageCardsForShare.name, TdfPageCardsForShare)
+Vue.component(TdfPageCardsForForum.name, TdfPageCardsForForum)
 
 Vue.component(TdfBox.name, TdfBox)
 Vue.component(TdfList.name, TdfList)

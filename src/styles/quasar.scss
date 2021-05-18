@@ -1,5 +1,9 @@
 @import './quasar.variables.scss';
 @import '~quasar-styl';
+
+@import './custom/common.scss';
+@import './custom/home.scss';
+@import './custom/forum.scss';
 // @import '~quasar-addon-styl';
 
 @media screen and (min-width: $breakpoint-md-min) {
@@ -59,9 +63,7 @@
 .avatar-height {
   height: 100px;
 }
-.forum-height {
-  height: 60px;
-}
+
 .white-back {
   background: white;
 }

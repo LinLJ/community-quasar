@@ -1,0 +1,43 @@
+// 屏幕小于600显示
+.small-screen-only {
+  @media screen and (min-width: $breakpoint-sm-min) {
+    display: none;
+  }
+  @media screen and (max-width: $breakpoint-xs-max) {
+    display: block;
+  }
+}
+// 屏幕大于600显示
+.normal-screen-only {
+  @media screen and (min-width: $breakpoint-sm-min) {
+    
+  }
+  @media screen and (max-width: $breakpoint-xs-max) {
+    display: none;
+  }
+}
+// 屏幕大于600小于1024显示
+.large-screen-only {
+  @media screen and (min-width: $breakpoint-sm-min) and( max-width: $breakpoint-sm-max) {
+    display: block;
+  }
+  @media screen and (max-width: $breakpoint-xs-max ){
+    display: none;
+  }
+  @media screen and ( min-width: $breakpoint-md-min) {
+    display: none;
+  }
+}
+// 屏幕大于1024显示
+.super-large-screen-only {
+  @media screen and (min-width: $breakpoint-md-min) {
+    display: block;
+  }
+  @media screen and (max-width: $breakpoint-sm-max ){
+    display: none;
+  }
+}
+//所有的a标签都没有下划线
+a {
+  text-decoration: none;
+}

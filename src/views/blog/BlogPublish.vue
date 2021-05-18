@@ -1,11 +1,11 @@
 <template>
   <div class="pc-screan-width">
     <div class="row q-pt-xs q-px-md">
-      <div class="col-2 q-px-xs q-py-lg">
+      <div v-if="!$q.screen.lt.md" class="col-md-2 q-px-xs q-py-lg">
         <span class="q-py-md text-h6">草稿</span>
         <div v-for="item in drafts" :key="item.id" class="row">
-          <div @click="handleClickDraft(item)" class="name">
-            {{ item.title }}
+          <div @click="handleClickDraft(item)" class="name cut-text">
+            <span>{{ item.title }}</span>
           </div>
           <div class="flex float-right">
             <span @click="handleDelete(item.id)">
@@ -14,7 +14,7 @@
           </div>
         </div>
       </div>
-      <div class="col-10 q-px-xs q-py-lg">
+      <div class="col-12 col-md-10 q-px-xs q-py-lg">
         <q-form ref="form" :model="blog">
           <div class="colum">
             <div class="row">
@@ -46,11 +46,66 @@
               <div class="col-1 text-center text-weight-bolder q-pt-sm">
                 标题:
               </div>
-              <div class="col-4"><q-input dense outlined v-model="blog.title" /></div>
+              <div class="col-4">
+                <q-input
+                  dense
+                  outlined
+                  v-model="blog.title"
+                  :rules="[(val) => !!val || '需要输入标题']"
+                />
+              </div>
             </div>
             <div class="row q-pt-lg">
               <div class="col-1 text-center q-pt-sm">标签:</div>
-              <div class="col-4"><q-input dense outlined v-model="text" /></div>
+              <!-- <div class="col-4"><q-input dense outlined v-model="text" /></div> -->
+              <div class="col-11">
+                <q-chip
+                  removable
+                  @remove="log('tag')"
+                  v-model="dynamicTags[index]"
+                  square
+                  :key="tag"
+                  v-for="(tag, index) in dynamicTags"
+                  class="q-mx-xs"
+                  >{{ tag }}</q-chip
+                >
+                <!-- <q-btn
+                  :key="tag"
+                  v-for="tag in dynamicTags"
+                  closable
+                  :disable-transitions="false"
+                  @close="handleClose(tag)"
+                  class="q-mx-xs"
+                  >{{ tag }}</q-btn
+                > -->
+                <q-select
+                  label="请输入标签，回车结束"
+                  ref="saveTagInput"
+                  v-if="inputVisible"
+                  dense
+                  outlined
+                  filled
+                  v-model="inputValue"
+                  use-input
+                  hide-selected
+                  fill-input
+                  input-debounce="0"
+                  :options="tagOptions"
+                  @filter="filterFn"
+                  @input-value="setTagModel"
+                  @keyup.enter.native="handleInputConfirm"
+                  style="width: 200px; padding-bottom: 32px"
+                >
+                  <template v-slot:no-option>
+                    <q-item>
+                      <q-item-section class="text-grey">
+                        No results
+                      </q-item-section>
+                    </q-item>
+                  </template>
+                </q-select>
+                <q-btn v-else @click="showInput">新增标签</q-btn>
+              </div>
 
               <div></div>
             </div>
@@ -93,7 +148,16 @@ import { evaTrash2Outline } from '@quasar/extras/eva-icons'
 export default {
   data() {
     return {
+      tagOptions: [
+        'TDF Cloud',
+        'TDF',
+        'TDF Blockchain',
+        '河图可视化',
+        'GIS云平台',
+        '业务流程管理平台',
+      ],
       drafts: [],
+      inputVisible: false,
       blogCatagory: '原创',
       options: [
         {
@@ -135,7 +199,6 @@ export default {
       publishLoading: false,
       isAuthor: false,
       dynamicTags: [],
-      inputVisible: false,
       inputValue: '',
     }
   },
@@ -153,6 +216,25 @@ export default {
     this.getDrafts()
   },
   methods: {
+    setTagModel(val) {
+      this.inputValue = val
+      // console.info("settagmodel",this.inputValue)
+      // if (val) {
+      //   this.dynamicTags.push(this.inputValue)
+      // }
+      // console.info('dynamicTags', this.dynamicTags)
+      // this.blog.tags = this.dynamicTags
+
+      // this.inputVisible = false
+      // this.inputValue = ''
+      // this.handleInputConfirm()
+    },
+    filterFn(val, update) {
+      update(() => {
+        const needle = val.toLowerCase()
+        this.tagOptions.filter((v) => v.toLowerCase().indexOf(needle) > -1)
+      })
+    },
     //添加标签
     chooseBlogCatagory(value) {
       this.blog.originalFlag = value
@@ -168,7 +250,7 @@ export default {
       this.inputVisible = true
       this.$nextTick((_) => {
         console.log(_)
-        this.$refs.saveTagInput.$refs.input.focus()
+        this.$refs.saveTagInput.focus()
       })
     },
 
@@ -178,7 +260,10 @@ export default {
         this.dynamicTags.push(inputValue)
       }
       console.info('dynamicTags', this.dynamicTags)
-      this.blog.tags = this.dynamicTags
+      this.blog.tags = this.dynamicTags.filter((item) => {
+        return item != false
+      })
+      //this.blog.tags = this.dynamicTags
 
       this.inputVisible = false
       this.inputValue = ''
@@ -276,43 +361,64 @@ export default {
         })
     },
     publicBlog() {
+      if (!this.blog.title) {
+        this.$q.notify('需要输入标题')
+        return
+      }
       this.blog.content = this.$refs.editor.getValue()
-      this.$refs.form.validate((valid) => {
-        if (valid) {
-          if (this.blog.userId) {
-            this.blog.validFlag = 1
-            this.publishLoading = true
-            for (let key in this.blog) {
-              if (this.blog[key] === null) {
-                this.blog[key] = undefined
-              }
-            }
-            addBlog(this.blog)
-              .then(() => {
-                if (this.blog.baseUrl) {
-                  this.$q.notify('修改成功')
-                  this.$router.push({
-                    path: this.blog.baseUrl,
-                  })
-                } else {
-                  this.$q.notify('发表成功')
-                  this.$router.push({
-                    name: 'blogList',
-                  })
-                }
-              })
-              .catch(() => {})
-              .finally(() => {
-                this.publishLoading = false
-              })
-          } else {
-            this.$q.notify('正在获取个人数据，请稍后重试')
+      
+      if (!this.blog.content) {
+        
+        this.$q.notify('需要输入内容')
+        return
+      }
+      if (this.blog.content.length<200) {
+        
+        this.$q.notify('正文不能少于200字')
+        return
+      }
+      if (this.blog.userId) {
+        this.blog.validFlag = 1
+        this.publishLoading = true
+        for (let key in this.blog) {
+          if (this.blog[key] === null) {
+            this.blog[key] = undefined
           }
         }
-      })
+        console.info(this.blog,"this.blog")
+        addBlog(this.blog)
+          .then(() => {
+            if (this.blog.baseUrl) {
+              this.$q.notify('修改成功')
+              this.$router.push({
+                path: this.blog.baseUrl,
+              })
+            } else {
+              this.$q.notify('发表成功')
+              this.$router.push({
+                name: 'blogList',
+              })
+            }
+            // this.getDrafts()
+          })
+          .catch(() => {})
+          .finally(() => {
+            this.publishLoading = false
+          })
+      } else {
+        this.$q.notify('正在获取个人数据，请稍后重试')
+      }
     },
     saveAsDraft() {
+      if (!this.blog.title) {
+        this.$q.notify('需要输入标题')
+        return
+      }
       this.blog.content = this.$refs.editor.getValue()
+      if (!this.blog.content) {
+        this.$q.notify('需要输入内容')
+        return
+      }
       this.blog.validFlag = 0
       for (let key in this.blog) {
         if (!this.blog[key] && key !== 'originalFlag') {
@@ -324,7 +430,6 @@ export default {
         .then((response) => {
           console.info('添加草稿，结果：' + response)
 
-          debugger
           this.$q.notify('添加草稿成功')
           this.blog = response.data.blog
           this.getDrafts()
@@ -342,6 +447,12 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../styles/variables.scss';
+.cut-text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+  overflow: hidden;
+}
 
 //标签样式
 .el-tag + .el-tag {

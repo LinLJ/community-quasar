@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="row q-pt-xs">
-      <div class="col-8 q-px-xs q-py-lg">
+      <div class="col-12 col-md-8 q-px-xs q-py-lg">
         <div class="q-pa-md">
           <div>
             <router-link
@@ -9,8 +9,10 @@
                 name: 'forumView',
                 params: { id: post.contentInfo.forumId },
               }"
-              class="forumitem-contain"
-              >返回{{ post.forumName }}</router-link
+              class="forumitem-contain q-pb-sm text-h6"
+              ><q-icon :name="evaUndo"></q-icon> 返回{{
+                post.forumName
+              }}</router-link
             >
           </div>
           <div class="q-pa-sm column title-box show-border">
@@ -18,36 +20,28 @@
               {{ post.contentInfo.title }}
               <span v-if="isAuthor" class="q-px-xs">
                 <q-icon
+                  @click="handleEdit(post.contentInfo.id)"
                   class="show-border q-pa-sm text-h6"
                   :name="evaEditOutline"
                 ></q-icon>
               </span>
               <span v-if="isAuthor" class="q-px-xs">
                 <q-icon
+                  @click="handleDeletePost(post.contentInfo.id)"
                   class="show-border q-pa-sm text-h6"
                   :name="evaTrash2Outline"
                 ></q-icon>
               </span>
-              <span v-if="false" class="q-px-xs">
-                <q-icon
-                  class="show-border q-pa-sm text-h6"
-                  :name="evaHeartOutline"
-                ></q-icon>
-              </span>
-              <span v-if="false" class="q-px-xs">
-                <q-icon
-                  class="show-border q-pa-sm text-h6"
-                  :name="evaHeart"
-                ></q-icon>
-              </span>
               <span v-if="!post.isFaved" class="q-px-xs">
                 <q-icon
+                  @click="handleCollect(post.contentInfo.id)"
                   class="show-border q-pa-sm text-h6"
                   :name="evaStarOutline"
                 ></q-icon>
               </span>
               <span v-if="post.isFaved" class="q-px-xs">
                 <q-icon
+                  @click="handleCollect(post.contentInfo.id)"
                   class="show-border q-pa-sm text-h6"
                   :name="evaStar"
                 ></q-icon>
@@ -63,17 +57,6 @@
             <md-editor-view
               :md-content="post.contentInfo.content"
             ></md-editor-view>
-
-            <!-- <div
-              @click="handleThumbUp"
-              v-loading="thumbLoading"
-              class="text-center"
-            >
-              <q-icon :name="matThumbUp"></q-icon>
-              {{ post.thumbUpNumber }}
-            </div>
-            <p class="text-h6 q-pl-sm">标签</p> -->
-
             <q-separator class="q-mb-md" inset />
             <div>
               <tdf-chip
@@ -82,20 +65,25 @@
                 :content="item.tagMix"
               ></tdf-chip>
             </div>
-            <p class="text-h6 q-pl-sm">评论</p>
+            <p class="text-h6 q-pl-sm">回帖</p>
 
             <q-separator class="q-mb-md" inset />
             <div class="q-px-sm">
               <tdf-md-editor
+                ref="editor"
                 :config="config"
                 :init-md-content="comment.content"
               ></tdf-md-editor>
             </div>
             <div class="q-pr-sm">
-              <q-btn class="float-right" color="primary" label="评论" />
+              <q-btn
+                @click="addComment"
+                class="float-right"
+                color="primary"
+                label="回帖"
+              />
             </div>
-            <div class="q-pl-sm">共{{ comment.commentCount }}条评论</div>
-            <div>
+            <div class="left-area q-pl-md">
               <div
                 v-for="(item, index) in comments"
                 :key="index"
@@ -122,9 +110,64 @@
                   <md-editor-view :md-content="reply.content" class="content" />
                 </div>
 
-                <q-btn @click="handleAddReply(index)" size="small"
-                  >回复</q-btn
+                <q-btn @click="handleAddReply(index)" size="small">回复</q-btn>
+                <q-btn
+                  v-if="userInfo.userId === item.userId"
+                  @click="handleDeleteComment(item.id)"
+                  :icon="evaTrash2Outline"
+                  size="small"
+                />
+
+                <div v-if="item.replyShow">
+                  <q-form
+                    :ref="'replyForm' + index"
+                    :model="comment"
+                    label-width="0px"
+                  >
+                    <div prop="content" size="medium">
+                      <tdf-md-editor
+                        :config="config"
+                        init-md-content=""
+                        :ref="'editorReply' + index"
+                      />
+                    </div>
+                  </q-form>
+                  <q-btn
+                    :loading="replyLoading"
+                    @click="addReply(item, index)"
+                    size="small"
+                    type="primary"
+                    >评论</q-btn
+                  >
+                </div>
+              </div>
+              <!-- <div
+                v-for="(item, index) in comments"
+                :key="index"
+                class="comment-item"
+              >
+                <a
+                  @click="gotoPersonView(item.userId)"
+                  class="comment-author"
+                  >{{ item.userName }}</a
                 >
+                <span class="comment-time">{{ item.createTime }}</span>
+
+                <md-editor-view :md-content="item.content" />
+
+                <div
+                  v-for="reply in item.replyList"
+                  :key="reply.id"
+                  class="reply-item"
+                >
+                  <span class="reply-meta">
+                    {{ reply.userName }}
+                    <span class="time"> {{ reply.createTime }} </span>
+                  </span>
+                  <md-editor-view :md-content="reply.content" class="content" />
+                </div>
+
+                <q-btn @click="handleAddReply(index)" size="small">回复</q-btn>
                 <q-btn
                   v-if="userInfo.userId === item.userId"
                   @click="handleDeleteComment(item.id)"
@@ -139,11 +182,11 @@
                     :rules="rules"
                     label-width="0px"
                   >
-                      <tdf-md-editor
-                        :config="config"
-                        init-md-content=""
-                        :ref="'editorReply' + index"
-                      />
+                    <tdf-md-editor
+                      :config="config"
+                      init-md-content=""
+                      :ref="'editorReply' + index"
+                    />
                   </q-form>
                   <q-btn
                     :loading="replyLoading"
@@ -153,33 +196,33 @@
                     >评论</q-btn
                   >
                 </div>
-              </div>
-              <!-- <tdf-scroll-load
-                :on-touch-bottom="getBlogComment"
-                :is-loaded-all="comment.isLast"
-                class="width-auto"
-              >
-                <div
-                  v-for="(item, index) in comments"
-                  :key="index"
-                  :body="item"
-                >
-                  <div class="q-pl-sm q-py-md">
-                    {{ item.userName }}
-                    {{ item.createTime }}
-                    <md-editor-view :md-content="item.content" />
-                  </div>
-                </div>
-              </tdf-scroll-load> -->
+              </div> -->
             </div>
           </div>
         </div>
       </div>
-      <div class="col-4 q-px-xs q-py-lg">
+      <div v-if="!$q.screen.lt.md" class="col-md-4 q-px-xs q-py-lg">
         <tdf-box class="text-h6" showBorder content="最新评论文章">
-          <tdf-list rounded :list="lastReplyPost"></tdf-list>
+          <tdf-list rounded :list="lastReplyPost" type="post"></tdf-list>
         </tdf-box>
       </div>
+      <q-dialog v-model="delDialog">
+        <q-card style="width: 300px">
+          <q-card-section>
+            <div class="text-h6">确认删除？</div>
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn
+              flat
+              label="确认"
+              @click="confirmDel"
+              color="primary"
+              v-close-popup
+            />
+            <q-btn flat label="取消" color="primary" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </div>
   </div>
 </template>
@@ -192,7 +235,9 @@ import {
   evaStar,
   evaTrash2Outline,
   evaEditOutline,
+  evaUndo,
 } from '@quasar/extras/eva-icons'
+
 import { matThumbUp } from '@quasar/extras/material-icons'
 // import { Notify } from 'quasar'
 
@@ -259,6 +304,9 @@ export default {
       addCommentLoading: false,
       postDelLoading: false,
       qrUrl: document.location.href,
+      delDialog: false,
+      confirmDialogType: 'post',
+      confirmDelId: '',
       rules: {
         content: [
           {
@@ -283,6 +331,7 @@ export default {
     this.evaStar = evaStar
     this.evaTrash2Outline = evaTrash2Outline
     this.evaEditOutline = evaEditOutline
+    this.evaUndo = evaUndo
     this.matThumbUp = matThumbUp
     this.getPost() // 当前帖子
     this.getPostComment() // 帖子评论
@@ -363,32 +412,13 @@ export default {
       this.postDelLoading = false
     },
     handleDeletePost(id) {
-      this.$_confirm(`是否删除?`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-      })
-        .then(() => {
-          this.postDelLoading = true
-          delPost(id)
-            .then(() => {
-              this.$_message.success('删除成功')
-              this.$router.push({
-                name: 'forumView',
-                params: {
-                  id: this.post.contentInfo.forumId,
-                },
-              })
-              this.postDelLoading = false
-            })
-            .catch(() => {})
-        })
-        .catch(() => {})
-      this.cancelButtonClass()
+      this.confirmDelId = id
+      this.delDialog = true
+      this.confirmDialogType = 'post'
     },
     handleCollect(id) {
       this.postDelLoading = true
-      debugger
+
       const obj = {
         category: 'post',
         id,
@@ -396,28 +426,31 @@ export default {
       }
       collect(obj)
         .then(() => {
-          this.$_message.success(obj.state ? '收藏成功' : '取消收藏成功')
+          obj.state
+            ? this.$q.notify('收藏成功')
+            : this.$q.notify('取消收藏成功')
           this.getPost()
         })
         .catch(() => {})
     },
     addComment() {
       this.comment.content = this.$refs.editor.getValue()
-      this.$refs.commentForm.validate((valid) => {
-        if (valid) {
-          this.$emit('isLogin')
-          this.addCommentLoading = true
-          addPostComment(this.comment)
-            .then(() => {
-              this.$refs.editor.setValue('')
-              this.getPostComment()
-            })
-            .catch(() => {})
-            .finally(() => {
-              this.addCommentLoading = false
-            })
-        }
-      })
+      if (this.comment.content.length < 5) {
+        this.$q.notify('回帖字数不能少于5')
+        return
+      }
+      this.$emit('isLogin')
+      this.addCommentLoading = true
+      addPostComment(this.comment)
+        .then(() => {
+          this.$refs.editor.setValue('')
+          this.getPostComment()
+          this.$q.notify('回帖成功')
+        })
+        .catch(() => {})
+        .finally(() => {
+          this.addCommentLoading = false
+        })
     },
     handleAddReply(index) {
       this.comments[index].replyShow = !this.comments[index].replyShow
@@ -426,30 +459,74 @@ export default {
       const editorRef = `editorReply${index}`
       this.comment.content = this.$refs[editorRef][0].getValue()
       const formRef = `replyForm${index}`
-      this.$refs[formRef][0].validate((valid) => {
-        if (valid) {
-          this.$emit('isLogin')
-          this.replyLoading = true
-          this.comment.citeReplyId = item.id
-          addPostComment(this.comment)
-            .then(() => {
-              this.getPostComment()
-            })
-            .catch(() => {})
-            .finally(() => {
-              this.replyLoading = false
-              this.comment.citeReplyId = undefined // 回帖和回复公用一个对象,防止回复之后再回帖时请求参数会带citeReplyId
-            })
-        }
-      })
-    },
-    handleDeleteComment(id) {
-      delReply(id)
+      console.info(
+        this.$refs[formRef][0].$attrs.model.content,
+        'his.$refs[formRef][0]'
+      )
+      if (this.$refs[formRef][0].$attrs.model.content.length < 5) {
+        this.$q.notify('回复字数不能少于5')
+        return
+      }
+      this.$emit('isLogin')
+      this.replyLoading = true
+      this.comment.citeReplyId = item.id
+      addPostComment(this.comment)
         .then(() => {
           this.getPostComment()
         })
         .catch(() => {})
+        .finally(() => {
+          this.replyLoading = false
+          this.comment.citeReplyId = undefined // 回帖和回复公用一个对象,防止回复之后再回帖时请求参数会带citeReplyId
+        })
+      // this.$refs[formRef][0].validate((valid) => {
+      //   if (valid) {
+      //     this.$emit('isLogin')
+      //     this.replyLoading = true
+      //     this.comment.citeReplyId = item.id
+      //     addPostComment(this.comment)
+      //       .then(() => {
+      //         this.getPostComment()
+      //       })
+      //       .catch(() => {})
+      //       .finally(() => {
+      //         this.replyLoading = false
+      //         this.comment.citeReplyId = undefined // 回帖和回复公用一个对象,防止回复之后再回帖时请求参数会带citeReplyId
+      //       })
+      //   }
+      // })
     },
+    handleDeleteComment(id) {
+      this.confirmDelId = id
+      this.delDialog = true
+      this.confirmDialogType = 'comment'
+    },
+    confirmDel() {
+      if (this.confirmDelId) {
+        if (this.confirmDialogType === 'comment') {
+          delReply(this.confirmDelId ).then(() => {
+            this.$q.notify('删除评论成功')
+            // this.$_message.success('删除评论成功')
+            this.getPostComment()
+          })
+        } else if (this.confirmDialogType === 'post') {
+          this.postDelLoading = true
+          delPost(this.confirmDelId).then(() => {
+            this.$q.notify('删除成功')
+
+            this.$router.push({
+              name: 'forumView',
+              params: {
+                id: this.post.contentInfo.forumId,
+              },
+            })
+            this.postDelLoading = false
+          })
+          // this.cancelButtonClass()
+        }
+      }
+    },
+
     gotoPersonView(id) {
       this.$router.push({
         name: 'space',
@@ -476,5 +553,89 @@ export default {
 }
 .icon-center {
   margin: auto;
+}
+</style>
+
+<style lang="scss" scoped>
+@import '../../styles/variables.scss';
+.mobile {
+  width: 100% !important;
+}
+.left-area {
+  float: left;
+  .forum-return {
+    font-size: $frontSizeBLg;
+    color: $gotoAllForumColor;
+    &:hover {
+      color: $frontPostColor;
+    }
+  }
+  .header {
+    text-align: center;
+    .title {
+      font-size: $fontSizeSuperLg;
+      color: $mainColor;
+    }
+    .meta {
+      font-size: $fontSizeBase;
+      color: $subColor;
+      margin-top: 10px;
+      .meta-item {
+        display: inline-block;
+        & + .meta-item {
+          margin-left: 10px;
+        }
+      }
+    }
+  }
+  .tdc-header {
+    font-size: $fontSizeLg;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eaeaea;
+    padding: 10px 0;
+  }
+  .comment-button {
+    position: relative;
+    text-align: end;
+  }
+  .comment-total {
+    display: inline-block;
+    height: 36px;
+    line-height: 36px;
+  }
+  .comment-item {
+    & + .comment-item {
+      margin-top: 20px;
+    }
+    .comment-author {
+      font-size: $fontSizeBase;
+      &:hover {
+        color: $brandColor;
+      }
+    }
+    .comment-time {
+      font-size: $fontSizeSm;
+      margin-left: 5px;
+      color: $subColor;
+    }
+    .delete {
+      cursor: pointer;
+    }
+    .reply-item {
+      padding-left: 10px;
+      margin: 10px;
+      border: 1px dashed $borderColor;
+      color: $subColor;
+      .reply-meta {
+        padding-left: 10px;
+        position: relative;
+        top: -13px;
+        background: $mainBgColor;
+      }
+      .content {
+        color: $subColor;
+      }
+    }
+  }
 }
 </style>

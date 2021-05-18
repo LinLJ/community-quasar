@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md">
+  <div class="">
     <q-card class="my-card">
       <q-card-section>用户个人信息</q-card-section>
       <q-separator inset />
@@ -79,15 +79,14 @@
         <div class="row q-gutter-md">
           <div class="text-center text-indigo-12 text-body2">
             积分：{{ personal.usablePoint }}
-            <q-tooltip> Todo </q-tooltip>
           </div>
           <div class="text-center text-indigo-12">
             排名：{{ personal.pointRanking }}
-            <q-tooltip> Todo </q-tooltip>
+            <q-tooltip> 当前总积分{{personal.totalPoint}} </q-tooltip>
           </div>
           <div class="text-center text-indigo-12">
             年度排名：{{ personal.annualPointRanking }}
-            <q-tooltip> Todo </q-tooltip>
+            <q-tooltip> 年度积分{{personal.annualPoint}} </q-tooltip>
           </div>
         </div>
       </q-card-actions>
