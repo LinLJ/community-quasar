@@ -5,7 +5,10 @@ import './router/routerHook'
 import store from "./store";
 import "./quasar";
 import "./common";
+
 import "./plugin"
+
+import "./config";
 Vue.config.productionTip = false;
 
 new Vue({
