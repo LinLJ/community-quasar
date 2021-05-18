@@ -10268,10 +10268,10 @@ vue-cli-plugin-quasar@~3.0.1:
   resolved "https://registry.npm.taobao.org/vue-cli-plugin-quasar/download/vue-cli-plugin-quasar-3.0.1.tgz#b9bf493adb57e9e36b3f6646cb74bc049129e80b"
   integrity sha1-ub9JOttX6eNrP2ZGy3S8BJEp6As=
 
-vue-cropper@^0.4.9:
-  version "0.4.9"
-  resolved "https://registry.npm.taobao.org/vue-cropper/download/vue-cropper-0.4.9.tgz?cache=0&sync_timestamp=1608604834259&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fvue-cropper%2Fdownload%2Fvue-cropper-0.4.9.tgz#fe650f32516ecf29014bbd4a9079191c8dc5a5ae"
-  integrity sha1-/mUPMlFuzykBS71KkHkZHI3Fpa4=
+vue-cropper@^0.5.6:
+  version "0.5.6"
+  resolved "https://registry.yarnpkg.com/vue-cropper/-/vue-cropper-0.5.6.tgz#a38c98d402da1421bd5e7535e16b9723f103cafd"
+  integrity sha512-54Z/AipXDBcE5nzJweTM+BryzSAcC0FCTMQLvLt6f4XanP4AWB3mPkQw3PG3NRICo7knljHO+N+pjZxYAKoTLQ==
 
 vue-eslint-parser@^7.0.0:
   version "7.6.0"
