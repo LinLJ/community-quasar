@@ -1,7 +1,6 @@
 <template>
   <div class="pc-screan-width">
     <div class="row q-pt-xs q-px-md">
-
       <div class="col q-px-xs q-py-lg">
         <q-form ref="form" :model="question">
           <div class="colum">
@@ -9,10 +8,56 @@
               <div class="col-1 text-center text-weight-bolder q-pt-sm">
                 标题:
               </div>
-              <div class="col-4"><q-input dense outlined v-model="question.title" /></div>
-                            <div class="col-1 text-center q-pt-sm">标签:</div>
-              <div class="col-4"><q-input dense outlined v-model="text" /></div>
+              <div class="col-4">
+                <q-input dense outlined v-model="question.title" />
+              </div>
+                <div class="col-1 text-center q-pt-sm">标签:</div>
+                <!-- <div class="col-4"><q-input dense outlined v-model="text" /></div> -->
+                <div class="col-4">
+                  <q-chip
+                    removable
+                    @remove="log('tag')"
+                    v-model="dynamicTags[index]"
+                    square
+                    :key="tag"
+                    v-for="(tag, index) in dynamicTags"
+                    class="q-mx-xs"
+                    >{{ tag }}</q-chip
+                  >
 
+                  <q-select
+                    label="请输入标签，回车结束"
+                    ref="saveTagInput"
+                    v-if="inputVisible"
+                    dense
+                    outlined
+                    filled
+                    v-model="inputValue"
+                    use-input
+                    hide-selected
+                    fill-input
+                    input-debounce="0"
+                    :options="tagOptions"
+                    @filter="filterFn"
+                    @input-value="setTagModel"
+                    @keyup.enter.native="handleInputConfirm"
+                    style="width: 200px; padding-bottom: 32px"
+                  >
+                    <template v-slot:no-option>
+                      <q-item>
+                        <q-item-section class="text-grey">
+                          No results
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
+                  <q-btn v-else @click="showInput">新增标签</q-btn>
+                </div>
+
+                <div></div>
+              
+              <!-- <div class="col-1 text-center q-pt-sm">标签:</div>
+              <div class="col-4"><q-input dense outlined v-model="text" /></div> -->
             </div>
 
             <div class="row q-pt-lg">
@@ -26,7 +71,9 @@
               </div>
             </div>
             <div class="row q-pt-lg q-pl-xl">
-              <div class="q-px-sm"><q-btn @click="publishQuestion">发布</q-btn></div>
+              <div class="q-px-sm">
+                <q-btn @click="publishQuestion">发布</q-btn>
+              </div>
 
               <div class="q-px-sm"><q-btn @click="close">取消</q-btn></div>
             </div>
@@ -38,7 +85,6 @@
 </template>
 
 <script>
-
 import { evaTrash2Outline } from '@quasar/extras/eva-icons'
 import { questionPublish, getQuestion, isAuthor } from '@/api/faq'
 import { getPersonalInfo } from '@/api/personal'
@@ -47,6 +93,14 @@ export default {
   data() {
     return {
       state: 0,
+      tagOptions: [
+        'TDF Cloud',
+        'TDF',
+        'TDF Blockchain',
+        '河图可视化',
+        'GIS云平台',
+        '业务流程管理平台',
+      ],
       question: {
         baseUrl: undefined,
         baseUrlState: undefined,
@@ -72,23 +126,22 @@ export default {
         userName: undefined,
         userUrl: undefined,
         userUrlState: undefined,
-        validFlag: undefined
+        validFlag: undefined,
       },
       config: this.$_global('EDITOR_TEXT_CONFIG'),
       publishLoading: false,
-      isAuthor:false,
-      restaurants:[],
+      isAuthor: false,
+      restaurants: [],
       dynamicTags: [],
       inputVisible: false,
       inputValue: '',
-
     }
   },
   created() {
     this.evaTrash2Outline = evaTrash2Outline
   },
   mounted() {
-    this.restaurants = this.loadAll();
+    this.restaurants = this.loadAll()
     if (this.$route.params.id) {
       this.question.id = this.$route.params.id
       this.nowIsEdit()
@@ -97,57 +150,69 @@ export default {
     }
   },
   methods: {
+    setTagModel(val) {
+      this.inputValue = val
+    },
+    filterFn(val, update) {
+      update(() => {
+        const needle = val.toLowerCase()
+        this.tagOptions.filter((v) => v.toLowerCase().indexOf(needle) > -1)
+      })
+    },
     //添加标签
     handleClose(tag) {
-      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
+      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
     },
 
     showInput() {
-      this.inputVisible = true;
-      this.$nextTick(_ => {
-        console.log(_);
-        this.$refs.saveTagInput.$refs.input.focus();
-      });
+      this.inputVisible = true
+      this.$nextTick((_) => {
+        console.log(_)
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
     },
 
     handleInputConfirm() {
-
-      let inputValue = this.inputValue;
+      let inputValue = this.inputValue
       if (inputValue) {
-        this.dynamicTags.push(inputValue);
+        this.dynamicTags.push(inputValue)
       }
-      console.info("dynamicTags",this.dynamicTags)
-      this.question.tags=this.dynamicTags;
+      console.info('dynamicTags', this.dynamicTags)
+      this.question.tags = this.dynamicTags
 
-      this.inputVisible = false;
-      this.inputValue = '';
+      this.inputVisible = false
+      this.inputValue = ''
     },
 
     //标签提示：
-    querySearch(queryString, cb){
-
-      var restaurants = this.restaurants;
-      var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+    querySearch(queryString, cb) {
+      var restaurants = this.restaurants
+      var results = queryString
+        ? restaurants.filter(this.createFilter(queryString))
+        : restaurants
       // 调用 callback 返回建议列表的数据
       //console.log("queryString:",queryString);
       //console.log("cb:",cb);
       //console.log("results:",results);
-      cb(results);
+      cb(results)
     },
     createFilter(queryString) {
       return (restaurant) => {
-        return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
-      };
+        return (
+          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
+          0
+        )
+      }
     },
     loadAll() {
       return [
-        { "value": "TDF Cloud" },
-        { "value": "TDF" },
-        { "value": "TDF Blockchain" },
-        { "value": "河图可视化" },
-        { "value": "GIS云平台" },
-        { "value": "业务流程管理平台" },
-      ];
+        { value: 'TDF Cloud' },
+        { value: 'TDF' },
+        { value: 'TDF Blockchain' },
+        { value: '河图可视化' },
+        { value: 'GIS云平台' },
+        { value: '业务流程管理平台' },
+      ]
     },
     handleSelect(item) {
       console.log(item)
@@ -155,53 +220,76 @@ export default {
     },
 
     nowIsEdit() {
-      isAuthor(this.question.id).then(response => {
-        this.isAuthor = response.data
-        if(this.isAuthor){
-          getQuestion(this.question.id).then(response => {
-            this.question = response.data.contentInfo
-            this.state = 1
-            this.$refs.editor.setValue(this.question.content)
-            this.isAuthor=false
-            console.log("response.data.tags",response.data.contentInfo.tags);
-            this.dynamicTags=response.data.contentInfo.tags;
-          }).catch(() => {})
-        }else {
-          this.$q.notify('不是本人，将跳转首页')
-          this.$router.push({
-            name: 'home',
-            component: () => import('@/views/home/index')
-          })
-        }
-      }).catch(() => {
-        console.info("查询是否为问题作者错误")
-      })
-
-
+      isAuthor(this.question.id)
+        .then((response) => {
+          this.isAuthor = response.data
+          if (this.isAuthor) {
+            getQuestion(this.question.id)
+              .then((response) => {
+                this.question = response.data.contentInfo
+                this.state = 1
+                this.$refs.editor.setValue(this.question.content)
+                this.isAuthor = false
+                console.log(
+                  'response.data.tags',
+                  response.data.contentInfo.tags
+                )
+                this.dynamicTags = response.data.contentInfo.tags
+              })
+              .catch(() => {})
+          } else {
+            this.$q.notify('不是本人，将跳转首页')
+            this.$router.push({
+              name: 'home',
+              component: () => import('@/views/home/index'),
+            })
+          }
+        })
+        .catch(() => {
+          console.info('查询是否为问题作者错误')
+        })
     },
     getPersonalInfo() {
-      getPersonalInfo().then(response => {
-        this.question.userId = response.data.userId
-        this.question.userName = response.data.userName
-      }).catch(() => {})
+      getPersonalInfo()
+        .then((response) => {
+          this.question.userId = response.data.userId
+          this.question.userName = response.data.userName
+        })
+        .catch(() => {})
     },
     publishQuestion() {
+      if (!this.question.title) {
+        this.$q.notify('需要输入标题')
+        return
+      }
       this.question.content = this.$refs.editor.getValue()
+      if (!this.question.content) {
+        
+        this.$q.notify('需要输入内容')
+        return
+      }
+      if (this.question.content.length<5) {
+        
+        this.$q.notify('正文不能少于5字')
+        return
+      }
       if (this.question.userId) {
-            this.publishLoading = true
-            questionPublish( this.question ).then(() => {
-              this.$q.notify('发表成功')
-              this.question.tags=""
-              this.$router.push({
-                name: 'faqList'
-              })
-            }).catch(() => {
-            }).finally(() => {
-              this.publishLoading = false
+        this.publishLoading = true
+        questionPublish(this.question)
+          .then(() => {
+            this.$q.notify('发布成功')
+            this.question.tags = ''
+            this.$router.push({
+              name: 'faqList',
             })
-          } else {
-            this.$q.notify('正在获取个人数据，请稍后重试')
-          }
+          })
+          .catch(() => {})
+          .finally(() => {
+            this.publishLoading = false
+          })
+      } else {
+        this.$q.notify('正在获取个人数据，请稍后重试')
+      }
       // this.$refs.form.validate(valid => {
       //   if (valid) {
       //     if (this.question.userId) {
@@ -221,8 +309,8 @@ export default {
       //     }
       //   }
       // })
-    }
-  }
+    },
+  },
 }
 </script>
 

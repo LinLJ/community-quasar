@@ -225,6 +225,16 @@ const routerMap = [
     component: () => import('@/views/faq/FaqPublish'),
     meta: { title: '问答新增', requireLogin: true }
   },
+  {
+    path: '/faq/edit/:id',
+    name: 'FaqEdit',
+    component: () => import('@/views/faq/FaqPublish')
+  },
+  {
+    path: '/faq/answer/edit/:questionId/:answerId',
+    name: 'AnswerEdit',
+    component: () => import('@/views/faq/AnswerEdit')
+  },
 ]
 
 export default new Router({

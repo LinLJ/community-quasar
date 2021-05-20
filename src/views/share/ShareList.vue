@@ -1,60 +1,77 @@
 <template>
-  <div class="column">
-    <div class="row">
+  <div class="column ">
+    <div v-if="!$q.screen.lt.md" class="row q-py-md ">
       <div class="col">
         <tdf-news-carousel
-          height="280px"          
+          height="280px"
           navigation
-
           :list="carousel"
         ></tdf-news-carousel>
       </div>
-      <div class="col">
-        <div v-loading="rightLoading" :class="{ 'only-right': !isShowCarousel }">
-        <article v-for="(item, index) in article" :key="index" class="article-wrapper">
-          <header v-if="index === 0" class="title first-title">
-            <a v-if="item.baseUrlState === '1'" :href="item.baseUrl" target="_blank">{{ item.title }}</a>
-            <router-link v-else :to="item.baseUrl">{{ item.title }}</router-link>
-          </header>
-          <header v-else class="title">
-            <a v-if="item.baseUrlState === '1'" :href="item.baseUrl" target="_blank">{{ item.title }}</a>
-            <router-link v-else :to="item.baseUrl">{{ item.title }}</router-link>
-          </header>
-          <section v-if="index === 0" class="summary">{{ item.summary }}</section>
-        </article>
-      </div>
+      <div class="col q-pt-md top-container">
+        <div
+          v-loading="rightLoading"
+          :class="{ 'only-right': !isShowCarousel }"
+        >
+          <article
+            v-for="(item, index) in article"
+            :key="index"
+            class="article-wrapper"
+          >
+            <header v-if="index === 0" class="title first-title">
+              <a
+                v-if="item.baseUrlState === '1'"
+                :href="item.baseUrl"
+                target="_blank"
+                >{{ item.title }}</a
+              >
+              <router-link v-else :to="item.baseUrl">{{
+                item.title
+              }}</router-link>
+            </header>
+            <header v-else class="title">
+              <a
+                v-if="item.baseUrlState === '1'"
+                :href="item.baseUrl"
+                target="_blank"
+                >{{ item.title }}</a
+              >
+              <router-link v-else :to="item.baseUrl">{{
+                item.title
+              }}</router-link>
+            </header>
+            <section v-if="index === 0" class="summary">
+              {{ item.summary }}
+            </section>
+          </article>
+        </div>
       </div>
     </div>
-    <div>
-      <q-tabs
-                  v-model="activeTab"
-                  dense
-                  align="left"
-                  :breakpoint="0"
-                >
-                  <q-tab name="first" label="推荐阅读" />
-                  <q-tab name="second" label="技术平台" />
-                  <q-tab name="third" label="CBB产品" />
-                  <q-tab name="fourth" label="发包项目" />
-                  <q-tab name="fifth" label="优秀开源" />
-                </q-tabs>
-                <q-tab-panels v-model="activeTab">
-                  <q-tab-panel name="first" class="q-px-none">
-                    <share-tab-list :tab-id="columnId.down[0]" />
-                  </q-tab-panel>
-                  <q-tab-panel name="second" class="q-px-none">
-                    <share-tab-list :tab-id="columnId.down[1]" />
-                  </q-tab-panel>
-                  <q-tab-panel name="third" class="q-px-none">
-                    <share-tab-list :tab-id="columnId.down[2]" />
-                  </q-tab-panel>
-                  <q-tab-panel name="fourth" class="q-px-none">
-                    <share-tab-list :tab-id="columnId.down[3]" />
-                  </q-tab-panel>
-                  <q-tab-panel name="fifth" class="q-px-none">
-                    <share-tab-list :tab-id="columnId.down[4]" />
-                  </q-tab-panel>
-                </q-tab-panels>
+    <div class="q-pt-md">
+      <q-tabs v-model="activeTab" dense align="left" :breakpoint="0">
+        <q-tab name="first" label="推荐阅读" />
+        <q-tab name="second" label="技术平台" />
+        <q-tab name="third" label="CBB产品" />
+        <q-tab name="fourth" label="发包项目" />
+        <q-tab name="fifth" label="优秀开源" />
+      </q-tabs>
+      <q-tab-panels v-model="activeTab">
+        <q-tab-panel name="first" class="q-px-none">
+          <share-tab-list :tab-id="columnId.down[0]" />
+        </q-tab-panel>
+        <q-tab-panel name="second" class="q-px-none">
+          <share-tab-list :tab-id="columnId.down[1]" />
+        </q-tab-panel>
+        <q-tab-panel name="third" class="q-px-none">
+          <share-tab-list :tab-id="columnId.down[2]" />
+        </q-tab-panel>
+        <q-tab-panel name="fourth" class="q-px-none">
+          <share-tab-list :tab-id="columnId.down[3]" />
+        </q-tab-panel>
+        <q-tab-panel name="fifth" class="q-px-none">
+          <share-tab-list :tab-id="columnId.down[4]" />
+        </q-tab-panel>
+      </q-tab-panels>
     </div>
   </div>
 </template>
@@ -128,14 +145,7 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
 @import '../../styles/variables.scss';
 .top-container {
-  margin-bottom: 20px;
-  border: 1px solid $borderColor;
-  border-radius: 5px;
-  overflow: hidden;
-  & > div {
-    float: left;
-    width: 50%;
-  }
+
   .only-right {
     width: 100%;
   }

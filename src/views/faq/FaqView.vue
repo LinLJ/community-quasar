@@ -1,53 +1,69 @@
 <template>
   <div>
     <div class="row q-pt-xs">
-      <div class="col-8 q-px-xs q-py-lg">
-        <div class="q-pa-md">
-          <div class="q-pa-sm column title-box show-border">
-            <div class="text-center text-h5 q-pt-xl">
-              {{ faq.contentInfo.title }}
-              <span v-if="isAuthor" class="q-px-xs">
-                <q-icon
-                  class="show-border q-pa-sm text-h6"
-                  :name="evaEditOutline"
-                ></q-icon>
+      <div class="col-12 col-md-8 q-px-xs q-py-lg">
+        <div class="">
+          <div class="q-pa-md column title-box show-border left-area">
+            <div v-loading="faqLoading" class="header">
+              <span class="title">
+                {{ faq.contentInfo.title }}
+                <span v-if="isAuthor" class="q-px-xs">
+                  <q-icon
+                    @click="handleEdit(faq.contentInfo.id)"
+                    class="show-border q-pa-sm text-h6"
+                    :name="evaEditOutline"
+                  ></q-icon>
+                </span>
+                <span v-if="isAuthor" class="q-px-xs">
+                  <q-icon
+                    @click="handleDel(faq.contentInfo.id)"
+                    class="show-border q-pa-sm text-h6"
+                    :name="evaTrash2Outline"
+                  ></q-icon>
+                </span>
+                <span v-if="!faq.isFaved" class="q-px-xs">
+                  <q-icon
+                    @click="handleCollect(faq.contentInfo.id)"
+                    class="show-border q-pa-sm text-h6"
+                    :name="evaStarOutline"
+                  ></q-icon>
+                </span>
+                <span v-if="faq.isFaved" class="q-px-xs">
+                  <q-icon
+                    @click="handleCollect(faq.contentInfo.id)"
+                    class="show-border q-pa-sm text-h6"
+                    :name="evaStar"
+                  ></q-icon>
+                </span>
               </span>
-              <span v-if="isAuthor" class="q-px-xs">
-                <q-icon
-                  class="show-border q-pa-sm text-h6"
-                  :name="evaTrash2Outline"
-                ></q-icon>
-              </span>
-              <span v-if="false" class="q-px-xs">
-                <q-icon
-                  class="show-border q-pa-sm text-h6"
-                  :name="evaHeartOutline"
-                ></q-icon>
-              </span>
-              <span v-if="false" class="q-px-xs">
-                <q-icon
-                  class="show-border q-pa-sm text-h6"
-                  :name="evaHeart"
-                ></q-icon>
-              </span>
-              <span v-if="!faq.isFaved" class="q-px-xs">
-                <q-icon
-                  class="show-border q-pa-sm text-h6"
-                  :name="evaStarOutline"
-                ></q-icon>
-              </span>
-              <span v-if="faq.isFaved" class="q-px-xs">
-                <q-icon
-                  class="show-border q-pa-sm text-h6"
-                  :name="evaStar"
-                ></q-icon>
-              </span>
+              <div class="meta">
+                <div v-if="faq.contentInfo.tags.length !== 0" class="meta-item">
+                  <tdc-tag
+                    class="blog-tags"
+                    v-model="faq.contentInfo.tags"
+                    just-for-show
+                  />
+                </div>
+                <div class="meta-item">
+                  <svg-icon icon-class="tdc-clock" />
+                  <span> {{ faq.contentInfo.updateTime }} </span>
+                </div>
+                <div class="meta-item">
+                  <svg-icon icon-class="user" />
+                  <router-link
+                    :to="{
+                      name: 'space',
+                      params: { id: faq.contentInfo.userId },
+                    }"
+                    >{{ faq.contentInfo.userName }}
+                  </router-link>
+                </div>
+                <div class="meta-item">
+                  <span>访问量: {{ faq.visitCount }}</span>
+                </div>
+              </div>
             </div>
-            <div class="text-center">
-              <!-- {{ faq.contentInfo.updateTime }}
-              {{ faq.contentInfo.userName }} -->
-              访问量：{{ faq.visitCount }}
-            </div>
+
             <q-separator class="q-mt-md q-mb-md" inset />
 
             <faq-view-item
@@ -57,9 +73,18 @@
             />
 
             <span class="comment-num">共{{ comment.answerCount }}条回答</span>
-            <div v-for="(item, index) in comment.contentInfo" :key="index" class="comment-item">
-            <faq-view-item :faq="item" :question-author="isAuthor" place="comment" @refresh-content="refreshComment"/>
-          </div>
+            <div
+              v-for="(item, index) in comment.contentInfo"
+              :key="index"
+              class="comment-item"
+            >
+              <faq-view-item
+                :faq="item"
+                :question-author="isAuthor"
+                place="comment"
+                @refresh-content="refreshComment"
+              />
+            </div>
 
             <q-separator class="q-mb-md" inset />
 
@@ -68,21 +93,44 @@
             <q-separator class="q-mb-md" inset />
             <div class="q-px-sm">
               <tdf-md-editor
+              ref="editor"
                 :config="config"
                 :init-md-content="comment.content"
               ></tdf-md-editor>
             </div>
             <div class="q-pr-sm">
-              <q-btn class="float-right" color="primary" label="回答" />
+              <q-btn
+                @click="addComment"
+                class="float-right"
+                color="primary"
+                label="回答"
+              />
             </div>
           </div>
         </div>
       </div>
-      <div class="col-4 q-px-xs q-py-lg">
+      <div v-if="!$q.screen.lt.md" class="col-md-4 q-px-xs q-py-lg">
         <tdf-box class="text-h6" showBorder content="最新发布问题">
-          <tdf-list rounded :list="lastestArtical"></tdf-list>
+          <tdf-list rounded :list="lastestArtical" type="question"></tdf-list>
         </tdf-box>
       </div>
+      <q-dialog v-model="delDialog">
+        <q-card style="width: 300px">
+          <q-card-section>
+            <div class="text-h6">确认删除？</div>
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn
+              flat
+              label="确认"
+              @click="confirmDel"
+              color="primary"
+              v-close-popup
+            />
+            <q-btn flat label="取消" color="primary" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </div>
   </div>
 </template>
@@ -95,6 +143,8 @@ import {
   evaStar,
   evaTrash2Outline,
   evaEditOutline,
+  evaArrowIosUpwardOutline,
+  evaArrowIosDownwardOutline,
 } from '@quasar/extras/eva-icons'
 import FaqViewItem from './components/FaqViewItem'
 import { collect } from '@/api/blog'
@@ -117,6 +167,9 @@ export default {
   },
   data() {
     return {
+      confirmDialogType: 'question',
+      confirmDelId: '',
+      delDialog: false,
       faq: {
         isThumbedUp: undefined,
         isLogin: undefined,
@@ -221,6 +274,8 @@ export default {
     this.evaStar = evaStar
     this.evaTrash2Outline = evaTrash2Outline
     this.evaEditOutline = evaEditOutline
+    this.evaArrowIosUpwardOutline = evaArrowIosUpwardOutline
+    this.evaArrowIosDownwardOutline = evaArrowIosDownwardOutline
     this.getQuestion(this.$route.params.id)
     this.getNewQues()
     this.getAnswer(this.$route.params.id)
@@ -293,6 +348,7 @@ export default {
       getNewQues()
         .then((response) => {
           this.lastestArtical = response.data
+          console.log(this.lastestArtical,"this.lastestArtical")
         })
         .finally(() => {
           this.lastReplyLoading = false
@@ -318,28 +374,48 @@ export default {
       this.questionDelLoading = false
     },
     handleDel(id) {
-      this.$_confirm(`是否删除?`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-      })
-        .then(() => {
-          this.questionDelLoading = true
-          delQuestion(id)
-            .then(() => {
-              this.$_message.success('删除成功')
-              this.$router.push({
-                name: 'faqList',
-              })
-              this.questionDelLoading = false
-            })
-            .catch(() => {
-              this.$_message.error('删除失败')
-            })
-        })
-        .catch(() => {})
-      this.cancelButtonClass()
+      this.confirmDelId = id
+      this.delDialog = true
+      this.confirmDialogType = 'question'
     },
+    confirmDel() {
+      if (this.confirmDelId) {
+        if (this.confirmDialogType === 'question') {
+          this.blogDelLoading = true
+          delQuestion(this.confirmDelId).then(() => {
+            this.$q.notify('删除成功')
+            this.$router.push({
+              name: 'faqList',
+            })
+            this.blogDelLoading = false
+          })
+          // this.cancelButtonClass()
+        }
+      }
+    },
+    // handleDel(id) {
+    //   this.$_confirm(`是否删除?`, '提示', {
+    //     confirmButtonText: '确定',
+    //     cancelButtonText: '取消',
+    //     type: 'warning',
+    //   })
+    //     .then(() => {
+    //       this.questionDelLoading = true
+    //       delQuestion(id)
+    //         .then(() => {
+    //           this.$_message.success('删除成功')
+    //           this.$router.push({
+    //             name: 'faqList',
+    //           })
+    //           this.questionDelLoading = false
+    //         })
+    //         .catch(() => {
+    //           this.$_message.error('删除失败')
+    //         })
+    //     })
+    //     .catch(() => {})
+    //   this.cancelButtonClass()
+    // },
 
     handleFollow(id, title) {
       const obj = {
@@ -361,28 +437,45 @@ export default {
         title,
       }
       collect(obj).then(() => {
-        this.$_message.success(obj.state ? '收藏成功' : '取消收藏成功')
+        obj.state ? this.$q.notify('收藏成功') : this.$q.notify('取消收藏成功')
         this.getQuestion(id)
       })
     },
     addComment() {
       this.replyComment.content = this.$refs.editor.getValue()
-      this.$refs.commentForm.validate((valid) => {
-        if (valid) {
-          this.$emit('isLogin')
-          this.addLoading = true
-          this.replyComment.questionId = this.$route.params.id
-          addAnswer(this.replyComment)
-            .then(() => {
-              this.refreshComment()
-              this.$refs.editor.setValue('')
-            })
-            .catch(() => {})
-            .finally(() => {
-              this.addLoading = false
-            })
-        }
-      })
+      if (this.replyComment.content.length < 5) {
+        this.$q.notify('回答字数不能少于5个')
+        return
+      }
+      this.$emit('isLogin')
+      this.addLoading = true
+      this.replyComment.questionId = this.$route.params.id
+      addAnswer(this.replyComment)
+        .then(() => {
+          this.refreshComment()
+          this.$refs.editor.setValue('')
+          this.$q.notify('回答成功')
+        })
+        .catch(() => {})
+        .finally(() => {
+          this.addLoading = false
+        })
+      // this.$refs.commentForm.validate((valid) => {
+      //   if (valid) {
+      //     this.$emit('isLogin')
+      //     this.addLoading = true
+      //     this.replyComment.questionId = this.$route.params.id
+      //     addAnswer(this.replyComment)
+      //       .then(() => {
+      //         this.refreshComment()
+      //         this.$refs.editor.setValue('')
+      //       })
+      //       .catch(() => {})
+      //       .finally(() => {
+      //         this.addLoading = false
+      //       })
+      //   }
+      // })
     },
   },
 }
@@ -393,9 +486,6 @@ export default {
   width: 100% !important;
 }
 .left-area {
-  float: left;
-  width: 70%;
-
   .header {
     .title {
       font-size: $fontSizeSuperLg;

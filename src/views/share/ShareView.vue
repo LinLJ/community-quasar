@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="row q-pt-xs">
-      <div class="col-8 q-px-xs q-py-lg">
+      <div class="col-12 col-md-8 q-px-xs q-py-lg">
         <div class="q-pa-md">
           <div class="q-pa-sm column title-box show-border">
             <div class="text-center text-h5 q-pt-xl">
@@ -21,8 +21,8 @@
           </div>
         </div>
       </div>
-      <div class="col-4 q-px-xs q-py-lg">
-        <div v-if="isShowRight" class="right-container">
+      <div v-if="!$q.screen.lt.md" class="col-md-4 q-px-xs q-py-lg">
+        <div v-if="isShowRight" class="right-container q-py-md">
           <section class="common">
             <header class="title">讨论组</header>
             <div v-if="info.forumName" class="content hover-transition">
@@ -140,9 +140,7 @@ export default {
   }
 }
 .right-container {
-  width: calc(30% - 20px);
   margin-left: 20px;
-  float: left;
   .title {
     line-height: 30px;
     border-bottom: 1px solid $borderColor;
