@@ -2,7 +2,7 @@
   <div class="q-pa-xs">
     <q-list>
       <q-item clickable v-ripple v-for="item in list" :key="item.id">
-        <q-item-section avatar>
+        <q-item-section avatar v-if="item.userId">
           <q-avatar :rounded="rounded" :square="square">
             <router-link
               target="_blank"
@@ -35,9 +35,18 @@
           >
             <q-item-label>{{ item.title }}</q-item-label>
           </router-link>
+          <router-link
+            class="text-dark text-subtitle2"
+            v-if="type === 'question'"
+            target="_blank"
+            :title="item.title"
+            :to="item.id?{ name: 'faqView', params: { id: item.id } }:item.baseUrl"
+          >
+            <q-item-label>{{ item.title }}</q-item-label>
+          </router-link>
 
           <q-item-label caption
-            >{{ item.updateTime }} {{ item.userName }}</q-item-label
+            >{{ item.updateTime || item.createTime }} {{ item.userName }}</q-item-label
           >
         </q-item-section>
       </q-item>

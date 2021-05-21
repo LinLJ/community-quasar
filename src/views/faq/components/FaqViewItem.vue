@@ -2,19 +2,24 @@
   <div class="faq-view-item-container">
     <div class="left-warpper">
       <div class="thumb">
-        <q-btn
-          @click="handleThumbUp(faq.id, 'question')"
-          size="mini"
-          icon="el-icon-arrow-up"
-          type="text"
-        />
+        <div>
+          <q-icon
+            @click="handleThumbUp(faq.id, 'question')"
+            size="mini"
+            :name="evaArrowIosUpwardOutline"
+            type="text"
+          />
+        </div>
+
         <span>{{ faq.ticketCount }}</span>
-        <q-btn
-          @click="handleThumbDown(faq.id, 'question')"
-          size="mini"
-          icon="el-icon-arrow-down"
-          type="text"
-        />
+        <div>
+          <q-icon
+            @click="handleThumbDown(faq.id, 'question')"
+            size="mini"
+            :name="evaArrowIosDownwardOutline"
+            type="text"
+          />
+        </div>
       </div>
       <span
         v-if="place === 'comment'"
@@ -36,28 +41,23 @@
       <md-editor-view :md-content="faq.content" />
       <div :class="{ 'only-author': place === 'text' }" class="footer">
         <div v-if="place === 'comment'">
-          <q-btn
-            @click="handleReply"
-            size="mini"
-            icon="el-icon-chat-dot-round"
-            type="text"
-            >回复</q-btn
+          <span @click="handleReply" class="text-info text-overline"
+            ><q-icon
+              class="answer-icon"
+              :name="evaMessageSquareOutline"
+            />回复</span
           >
-          <q-btn
+          <span
             v-if="faq.author"
             @click="handleEdit"
-            size="mini"
-            icon="el-icon-edit"
-            type="text"
-            >编辑</q-btn
+            class="text-info text-overline"
+            ><q-icon class="answer-icon" :name="evaEditOutline" />编辑</span
           >
-          <q-btn
+          <span
             v-if="faq.author"
             @click="handleDelComment"
-            size="mini"
-            icon="el-icon-delete"
-            type="text"
-            >删除</q-btn
+            class="text-info text-overline"
+            ><q-icon class="answer-icon" :name="evaTrash2Outline" />删除</span
           >
         </div>
         <router-link
@@ -78,10 +78,10 @@
           </div>
           <div class="icons-operate">
             <div @click="handleReplyTo(item.id, item.userName)">
-              <svg-icon icon-class="tdc-reply" class-name="icon-btn" />
+              <q-icon :name="evaCornerUpRightOutline"></q-icon>
             </div>
-            <div @click="handleDeleteReply(item.id)">
-              <svg-icon icon-class="tdc-delete" class-name="icon-btn" />
+            <div v-if="faq.author" @click="handleDeleteReply(item.id)">
+              <q-icon :name="evaTrash2Outline"></q-icon>
             </div>
           </div>
         </div>
@@ -92,28 +92,54 @@
             :rules="rules"
             label-width="0px"
           >
-            <q-form-item prop="content" size="medium">
-              <tdf-md-editor
-                :config="config"
-                :init-md-content="reply.content"
-                ref="editor"
-              />
-            </q-form-item>
+            <tdf-md-editor
+              :config="config"
+              :init-md-content="reply.content"
+              ref="editor"
+            />
           </q-form>
-          <q-btn
-            :loading="addLoading"
+
+          <a
             @click="addReply"
-            size="mini"
-            icon="el-icon-s-comment"
-            type="primary"
-            >回复</q-btn
-          >
+            style="height: 30px; width: 80px"
+            class="q-pl-sm text-overline"
+            ><q-icon
+              style="width: 20px; height: 20px"
+              :name="evaMessageSquareOutline"
+            />
+            <span style="width: 40px; height: 20px">回复</span>
+          </a>
         </div>
       </div>
     </div>
+    <q-dialog v-model="delDialog">
+      <q-card style="width: 300px">
+        <q-card-section>
+          <div class="text-h6">确认删除？</div>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn
+            flat
+            label="确认"
+            @click="confirmDel"
+            color="primary"
+            v-close-popup
+          />
+          <q-btn flat label="取消" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 <script>
+import {
+  evaMessageSquareOutline,
+  evaEditOutline,
+  evaTrash2Outline,
+  evaArrowIosUpwardOutline,
+  evaArrowIosDownwardOutline,
+  evaCornerUpRightOutline,
+} from '@quasar/extras/eva-icons'
 import {
   adopt,
   thumbup,
@@ -125,6 +151,14 @@ import {
 
 export default {
   name: 'FaqViewItem',
+  created() {
+    this.evaMessageSquareOutline = evaMessageSquareOutline
+    this.evaEditOutline = evaEditOutline
+    this.evaTrash2Outline = evaTrash2Outline
+    this.evaArrowIosUpwardOutline = evaArrowIosUpwardOutline
+    this.evaArrowIosDownwardOutline = evaArrowIosDownwardOutline
+    this.evaCornerUpRightOutline = evaCornerUpRightOutline
+  },
 
   props: {
     faq: {
@@ -146,6 +180,9 @@ export default {
   },
   data() {
     return {
+      confirmDialogType: 'comment',
+      confirmDelId: '',
+      delDialog: false,
       commentShow: false,
       config: {
         width: '100%',
@@ -256,6 +293,7 @@ export default {
         .then(() => {
           this.getReply()
           this.$refs.editor.setValue('')
+          this.$q.notify('回复成功')
         })
         .catch(() => {})
         .finally(() => {
@@ -285,46 +323,39 @@ export default {
         },
       })
     },
-    handleDelComment() {
-      this.$_confirm(`是否删除回答?`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-      })
-        .then(() => {
-          delAnswer(this.faq.id)
-            .then(() => {
-              this.$q.notify('删除回答成功')
-              this.$emit('refresh-content')
-            })
-            .catch(() => {
-              this.$q.notify('删除回答失败')
-            })
-        })
-        .catch(() => {})
-    },
+
     handleReplyTo(id, name) {
       this.reply.citeReplyId = id
       let input = this.$refs.editor.getValue()
       this.$refs.editor.setValue(`${this.replyText}${name}:${input}`)
     },
+
+    handleDelComment() {
+      this.confirmDelId = this.faq.id
+      this.delDialog = true
+      this.confirmDialogType = 'comment'
+    },
     handleDeleteReply(id) {
-      this.$_confirm(`是否删除评论?`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-      })
-        .then(() => {
-          delReply(id)
-            .then(() => {
-              this.$q.notify('删除评论成功')
-              this.getReply()
-            })
-            .catch(() => {
-              this.$q.notify('删除评论失败')
-            })
-        })
-        .catch(() => {})
+      this.confirmDelId = id
+      this.delDialog = true
+      this.confirmDialogType = 'comment'
+    },
+    confirmDel() {
+      if (this.confirmDelId) {
+        if (this.confirmDialogType === 'comment') {
+          delAnswer(this.faq.id).then(() => {
+            this.$q.notify('删除回答成功')
+            this.$emit('refresh-content')
+          })
+        } else if (this.confirmDialogType === 'reply') {
+          this.blogDelLoading = true
+          delReply(this.confirmDelId).then(() => {
+            this.$q.notify('删除评论成功')
+            this.getReply()
+          })
+          // this.cancelButtonClass()
+        }
+      }
     },
   },
 }
@@ -406,5 +437,12 @@ export default {
   .icon-btn {
     cursor: pointer;
   }
+}
+.answer-icon {
+  margin-bottom: 3px;
+  padding-right: 3px;
+}
+.q-btn__wrapper {
+  padding: 0 0 0 0;
 }
 </style>

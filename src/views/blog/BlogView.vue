@@ -2,7 +2,7 @@
   <div>
     <div class="row q-pt-xs">
       <div class="col-12 col-md-8 q-px-xs q-py-lg">
-        <div class="q-pa-md">
+        <div class="">
           <div class="q-pa-sm column title-box show-border">
             <div class="text-center text-h5 q-pt-xl">
               {{ blog.contentInfo.title }}
