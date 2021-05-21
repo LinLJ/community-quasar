@@ -1,20 +1,35 @@
 <template>
   <div>
     <div class="top-search">
-      <el-input
+      <div class="row">
+        <q-input
+        class="col-11 q-mt-md"
         v-model="listQuery.search"
         type="search"
-        placeholder="请输入关键字"
         autocomplete
         @keyup.enter.native="handleSearch" />
-      <el-button type="primary" class="search-btn" @click="handleSearch">搜索</el-button>
-      <el-radio-group v-model="listQuery.category" class="category" @change="handleSearch">
+      <q-btn color="primary" class="col-1 search-btn q-mt-lg" @click="handleSearch">搜索</q-btn>
+      </div>
+      
+      <q-tabs
+        v-model="tab"
+        class="text-teal"
+        align="left"
+        @click="handleSearch"
+      >
+        <q-tab name="all" label="全部" />
+        <q-tab name="blog" label="博客" />
+        <q-tab name="post"  label="帖子" />
+        <q-tab name="question"  label="问答" />
+        <q-tab name="accessory"  label="附件" />
+      </q-tabs>
+      <!-- <el-radio-group v-model="listQuery.category" class="category" @change="handleSearch">
         <el-radio-button label="all">全部</el-radio-button>
         <el-radio-button label="blog">博客</el-radio-button>
         <el-radio-button label="post">帖子</el-radio-button>
         <el-radio-button label="question">问答</el-radio-button>
         <el-radio-button label="accessory">附件</el-radio-button>
-      </el-radio-group>
+      </el-radio-group> -->
     </div>
     <section>
       <tdf-scroll-load :on-touch-bottom="getList" :is-loaded-all="isLoadedAll" ref="scrollLoad">
@@ -46,6 +61,7 @@ export default {
   components: {  },
   data() {
     return {
+      tab:"all",
       listQuery: {
         search: '',
         category: 'all',
@@ -80,7 +96,7 @@ export default {
       })
     },
     handleSearch() {
-      this.$router.push({ path: '/search', query: { category: this.listQuery.category, keyword: this.listQuery.search }})
+      this.$router.push({ path: '/search', query: { category: this.tab, keyword: this.listQuery.search }})
     }
   }
 }

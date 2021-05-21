@@ -1,8 +1,9 @@
 <template>
   <div>
-    <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
+    <q-form ref="form" @submit="onSubmit" @reset="onReset" class="q-gutter-md">
       <div class="column">
         <div class="row">
+
           <div class="col-2">真实姓名</div>
           <div class="col-4">{{ form.userName }}</div>
           <div class="col-2">邮箱地址</div>
@@ -19,74 +20,75 @@
         </div>
 
         <div class="row">
-          <div class="col-2">你的姓名</div>
+        </div>
+        <div class="row q-py-sm">
+          <div class="col-2 pt-12" pt-12>手机号</div>
           <div class="col-10">
-            <q-input v-model="text" label="Standard" />
+            <q-input filled    v-model="form.phoneNum" />
           </div>
         </div>
-        <div class="row">
-          <div class="col-2">手机号</div>
+        <div class="row q-py-sm">
+          <div class="col-2 pt-12">身份证号</div>
           <div class="col-10">
-            <q-input v-model="form.phoneNum" label="Standard" />
+            <q-input filled   v-model="form.idNumber" />
           </div>
         </div>
-        <div class="row">
-          <div class="col-2">身份证号</div>
+        <div class="row q-py-sm">
+          <div class="col-2 pt-12">出生日期</div>
           <div class="col-10">
-            <q-input v-model="form.idNumber" label="Standard" />
+            <q-input filled v-model="birthday" mask="date" :rules="['date']">
+              <template v-slot:append>
+                <q-icon name="event" class="cursor-pointer">
+                  <q-popup-proxy
+                    ref="qDateProxy"
+                    transition-show="scale"
+                    transition-hide="scale"
+                  >
+                    <q-date v-model="birthday">
+                      <div class="row items-center justify-end">
+                        <q-btn
+                          v-close-popup
+                          label="Close"
+                          color="primary"
+                          flat
+                        />
+                      </div>
+                    </q-date>
+                  </q-popup-proxy>
+                </q-icon>
+              </template>
+            </q-input>
           </div>
         </div>
-        <div class="row">
-          <div class="col-2">出生日期</div>
+        <div class="row q-py-sm">
+          <div class="col-2 pt-12">居住地</div>
           <div class="col-10">
-            <!-- <q-input filled v-model="form.birthday" mask="date" :rules="['date']">
-            <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-                <q-popup-proxy
-                  ref="qDateProxy"
-                  transition-show="scale"
-                  transition-hide="scale"
-                >
-                  <q-date v-model="date">
-                    <div class="row items-center justify-end">
-                      <q-btn v-close-popup label="Close" color="primary" flat />
-                    </div>
-                  </q-date>
-                </q-popup-proxy>
-              </q-icon>
-            </template>
-          </q-input> -->
+            <q-input filled v-model="form.address"  />
           </div>
         </div>
-        <div class="row">
-          <div class="col-2">居住地</div>
+        <div class="row q-py-sm">
+          <div class="col-2 pt-12">博客地址</div>
           <div class="col-10">
-            <q-input v-model="form.address" label="Standard" />
+            <q-input filled v-model="form.blog"  />
           </div>
         </div>
-        <div class="row">
-          <div class="col-2">博客地址</div>
-          <div class="col-10">
-            <q-input v-model="form.blog" label="Standard" />
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-2">更换头像</div>
+        <div class="row q-py-sm">
+          <div class="col-2 pt-12">更换头像</div>
           <div class="avatar" @click="handleAvatarClick">
             <img :src="form.avatar ? form.avatar : img_avatar" alt="" />
           </div>
         </div>
       </div>
       <div>
-        <q-btn label="Submit" type="submit" color="primary" @click="save" />
+        <q-btn label="保存" type="submit" color="primary" @click="save" />
       </div>
     </q-form>
     <q-dialog v-model="dialogVisible">
       <q-card style="width: 900px; height: 650px; max-width: 80vw">
         <q-card-section class="row items-center q-pb-none">
-            <div class="text-subtitle1 row">更换头像</div>
-            <q-space />
-            <q-btn icon="close" flat round dense v-close-popup />
+          <div class="text-subtitle1 row">更换头像</div>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
           <q-separator />
           <div class="avatar-setting">
             <div class="img-cropper">
@@ -144,7 +146,12 @@
               ></q-icon>
               左转
             </q-btn>
-            <q-btn color="primary" :size="$btnSize" class="q-ml-sm" @click="rotateRight">
+            <q-btn
+              color="primary"
+              :size="$btnSize"
+              class="q-ml-sm"
+              @click="rotateRight"
+            >
               <q-icon
                 :size="$btnIconSize"
                 class="q-mr-sm"
@@ -152,7 +159,12 @@
               ></q-icon>
               右转
             </q-btn>
-            <q-btn color="primary" :size="$btnSize" class="q-ml-sm" @click="changeScale(1)">
+            <q-btn
+              color="primary"
+              :size="$btnSize"
+              class="q-ml-sm"
+              @click="changeScale(1)"
+            >
               <q-icon
                 :size="$btnIconSize"
                 class="q-mr-sm"
@@ -160,7 +172,12 @@
               ></q-icon>
               放大
             </q-btn>
-            <q-btn color="primary" :size="$btnSize" class="q-ml-sm" @click="changeScale(-1)">
+            <q-btn
+              color="primary"
+              :size="$btnSize"
+              class="q-ml-sm"
+              @click="changeScale(-1)"
+            >
               <q-icon
                 :size="$btnIconSize"
                 class="q-mr-sm"
@@ -169,7 +186,12 @@
               缩小
             </q-btn>
             <q-space></q-space>
-            <q-btn color="primary" :size="$btnSize" label="确定" />
+            <q-btn
+              color="primary"
+              :size="$btnSize"
+              @click="complete"
+              label="确定"
+            />
           </div>
         </q-card-section>
       </q-card>
@@ -181,23 +203,27 @@
 import img_avatar from '@/assets/avatar.png'
 // import { VueCropper } from 'vue-cropper'
 // import { validateMobile, validateID } from '@/utils/validate'
-import { VueCropper } from "vue-cropper";
+import { VueCropper } from 'vue-cropper'
 // import { validateMobile, validateID } from '@/utils/validate'
-import { getSettingInfo, userSetting, userAvatar } from "@/api/personal";
+import { getSettingInfo, userSetting, userAvatar } from '@/api/personal'
+import { getPersonalInfo } from '@/api/personal'
 
 export default {
-  name: "PersonalSetting",
+  name: 'PersonalSetting',
+
   components: {
     VueCropper,
   },
   data() {
     return {
-      sex: "0",
+      userId: '',
+      sex: '0',
       img_avatar,
       addLoading: false,
       dialogVisible: false,
       previews: {},
       image_url: undefined,
+      birthday: '1999/01/01',
       form: {
         userName: undefined,
         email: undefined,
@@ -210,44 +236,59 @@ export default {
         blog: undefined,
         avatar: undefined,
       },
-    };
+    }
   },
   computed: {
     isDesktop() {
-      return this.$store.getters.device === "desktop";
+      return this.$store.getters.device === 'desktop'
     },
     isMinMobile() {
-      return this.$store.getters.device === "min-mobile";
+      return this.$store.getters.device === 'min-mobile'
     },
   },
   created() {
-    this.getSettingInfo();
+    this.getSettingInfo()
+    this.getPersonalInfo()
+    console.info(this.userId, 'this.userId')
   },
   methods: {
+    getPersonalInfo() {
+      getPersonalInfo()
+        .then((response) => {
+          this.userId = response.data.userId
+        })
+        .catch(() => {})
+    },
     getSettingInfo() {
       getSettingInfo()
         .then((response) => {
-          this.form = response.data;
+          this.form = response.data
+          if(this.form.birthday){
+            this.birthday=this.form.birthday
+          }
           this.$nextTick(() => {
-            this.$refs.form.clearValidate();
-          });
+            this.$refs.form.clearValidate()
+          })
         })
         .catch(() => {
           this.$_message({
-            message: "获取个人设置失败",
-            type: "error",
-          });
-        });
+            message: '获取个人设置失败',
+            type: 'error',
+          })
+        })
     },
-     // 选择本地图片
+    // 选择本地图片
     chooseImage(event) {
       let reader = new FileReader()
       let file = event.target.files[0]
 
-      if (event.target.value && !/\.(gif|jpg|jpeg|png|bmp|GIF|JPG|PNG)$/.test(event.target.value)) {
+      if (
+        event.target.value &&
+        !/\.(gif|jpg|jpeg|png|bmp|GIF|JPG|PNG)$/.test(event.target.value)
+      ) {
         this.$q.notify({
           message: '图片类型必须是.gif,jpeg,jpg,png,bmp中的一种',
-          type: 'negative'
+          type: 'negative',
         })
         return false
       }
@@ -266,7 +307,7 @@ export default {
         reader.readAsDataURL(file) // 将图片转为base64格式
       }
     },
-     // 图片向左旋转90度
+    // 图片向左旋转90度
     rotateLeft() {
       this.$refs.cropper.rotateLeft()
     },
@@ -285,50 +326,55 @@ export default {
     },
     // 剪裁完成，上传头像
     complete() {
-      this.$refs.cropper.getCropData(data => {
-        userAvatar({avatarBaseCode: data}).then(() => {
-          this.dialogVisible = false
-          this.$q.notify({
-            message: '头像上传成功',
-            type: 'positive'
+      this.$refs.cropper.getCropData((data) => {
+        userAvatar({ avatarBaseCode: data })
+          .then(() => {
+            this.dialogVisible = false
+            this.$q.notify({
+              message: '头像上传成功',
+              type: 'positive',
+            })
+            this.$router.push('/personal?tab=setting')
+            //window.location.reload()
           })
-          window.location.reload()
-        }).catch(() => {
-          this.$q.notify({
-            message: '头像上传失败',
-            type: 'negative'
+          .catch(() => {
+            this.$q.notify({
+              message: '头像上传失败',
+              type: 'negative',
+            })
           })
-        })
       })
     },
     save() {
-      this.$q.notify("hello");
-      console.info("------------------------", this.form);
+      this.form.avatar = this.userId + '.jpg'
+      this.form.birthday=this.birthday
+      console.info(this.form.avatar, 'this.form.avatar')
+      console.info(this.form.avatar, 'this.form.avatar')
       userSetting(this.form)
         .then(() => {
           this.$q.notify({
-            message: "修改个人设置成功",
-          });
+            message: '修改个人设置成功',
+          })
 
-          this.addLoading = false;
+          this.addLoading = false
         })
         .catch(() => {
-          this.addLoading = false;
+          this.addLoading = false
           this.$q.notify({
-            message: "修改个人设置失败",
-          });
-        });
+            message: '修改个人设置失败',
+          })
+        })
     },
     handleAvatarClick() {
-      console.info("444446666");
-      this.dialogVisible = true;
+      console.info('444446666')
+      this.dialogVisible = true
     },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>
-@import "../../../styles/quasar";
+@import '../../../styles/quasar';
 .avatar {
   width: 180px;
   &:hover {

@@ -235,6 +235,16 @@ const routerMap = [
     name: 'AnswerEdit',
     component: () => import('@/views/faq/AnswerEdit')
   },
+  {
+    path: '/rank',
+    component: Layout,
+    redirect: '/rank/index',
+    children: [{
+      path: 'index',
+      name: 'rank',
+      component: () => import('@/views/home/Rank'),
+    }]
+  },
 ]
 
 export default new Router({

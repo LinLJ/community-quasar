@@ -83,11 +83,14 @@
         class="col-md-4 q-pr-lg normal-screen-only"
       >
         <tdf-user-card class="q-pa-md" v-if="isLogin" :personal="personal" />
+        <router-link to="/rank" tag="a" target="_blank" class="label no-list">
         <tdf-box
           class="text-h6 q-pa-md width-auto"
           showBorder
           content="社区排行榜"
-        ></tdf-box>
+        ></tdf-box></router-link>
+ 
+        
         <tdf-box class="text-h6 q-pa-md" showBorder content="博客推荐">
           <tdf-list rounded :list="recommendBlogs" type="blog"></tdf-list>
         </tdf-box>

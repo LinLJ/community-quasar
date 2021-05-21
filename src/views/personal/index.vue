@@ -1,10 +1,10 @@
 <template>
   <div class="row q-pt-lg">
-    <div class="col-8">
+    <div class="col-12 col-md-8">
       <div>
-        <q-splitter v-model="splitterModel">
+        <q-splitter v-if="!$q.screen.lt.md" v-model="splitterModel">
           <template v-slot:before>
-            <q-tabs v-model="tab" vertical class="text-teal fixed" >
+            <q-tabs v-model="tab" vertical mobile-arrows class="text-teal fixed">
               <q-tab name="blog" label="我的博客" />
               <q-tab name="post" label="我的帖子" />
               <q-tab name="question" label="我的问答" />
@@ -76,15 +76,106 @@
                 <component :is="msgComponent" />
               </q-tab-panel>
               <q-tab-panel name="setting">
-          <personal-setting />
+                <personal-setting />
               </q-tab-panel>
             </q-tab-panels>
           </template>
         </q-splitter>
+
+
+
+        <q-card v-if="$q.screen.lt.md">
+
+        <q-tabs
+          v-model="tab"
+          dense
+          class="text-teal"
+          active-color="primary"
+          indicator-color="primary"
+          align="justify"
+          narrow-indicator
+        >
+          <q-tab name="blog" label="我的博客" />
+              <q-tab name="post" label="我的帖子" />
+              <q-tab name="question" label="我的问答" />
+              <q-tab name="forum" label="我的小组" />
+              <q-tab name="favorites" label="我的收藏夹" />
+              <div style="height: 30px"></div>
+              <q-tab name="follower" label="关注的人" />
+              <q-tab name="followed" label="粉丝列表" />
+              <q-tab name="point" label="积分状态" />
+              <q-tab name="notify" label="消息历史" />
+              <q-tab name="setting" label="设置" />
+        </q-tabs>
+
+        <q-separator />
+        <q-tab-panels
+              v-model="tab"
+              animated
+              transition-prev="jump-up"
+              transition-next="jump-up"
+            >
+              <q-tab-panel name="blog">
+                <personal-blog />
+              </q-tab-panel>
+              <q-tab-panel name="post">
+                <personal-post />
+              </q-tab-panel>
+              <q-tab-panel name="question">
+                <q-tabs
+                  v-model="questionTab"
+                  dense
+                  align="left"
+                  :breakpoint="0"
+                >
+                  <q-tab name="question" label="我的提问" />
+                  <q-tab name="answer" label="我的回答" />
+                  <q-tab name="questionFollow" label="关注问题" />
+                </q-tabs>
+                <q-tab-panels v-model="questionTab">
+                  <q-tab-panel name="question" class="q-px-none">
+                    <personal-question />
+                  </q-tab-panel>
+                  <q-tab-panel name="answer" class="q-px-none">
+                    <personal-answer />
+                  </q-tab-panel>
+                  <q-tab-panel name="questionFollow" class="q-px-none">
+                    <personal-question-follow />
+                  </q-tab-panel>
+                </q-tab-panels>
+              </q-tab-panel>
+              <q-tab-panel name="forum">
+                <personal-forums />
+              </q-tab-panel>
+              <q-tab-panel name="favorites">
+                <personal-favorites />
+              </q-tab-panel>
+              <q-tab-panel name="follower">
+                <personal-follower />
+              </q-tab-panel>
+              <q-tab-panel name="followed">
+                <personal-followed />
+              </q-tab-panel>
+              <q-tab-panel name="point">
+                <personal-score />
+              </q-tab-panel>
+              <q-tab-panel name="notify">
+                <component :is="msgComponent" />
+              </q-tab-panel>
+              <q-tab-panel name="setting">
+                <personal-setting />
+              </q-tab-panel>
+            </q-tab-panels>
+
+
+      </q-card>
+
+
+
       </div>
     </div>
-    <div class="col-4 ">
-      <tdf-user-card  :personal="personal"></tdf-user-card>
+    <div v-if="!$q.screen.lt.md" class="col-md-4">
+      <tdf-user-card :personal="personal"></tdf-user-card>
     </div>
   </div>
   <!-- <tdf-scroll-load :on-touch-bottom="getScoreInfos" :is-loaded-all="allLoaded">
@@ -113,7 +204,7 @@ import PersonalUnreadNotify from './components/PersonalUnreadNotify'
 import PersonalNotify from './components/PersonalNotify'
 import PersonalFollowed from './components/PersonalFollowed'
 import PersonalFollower from './components/PersonalFollower'
-  import PersonalSetting from './components/PersonalSetting'
+import PersonalSetting from './components/PersonalSetting'
 
 export default {
   name: 'Personal',
@@ -130,8 +221,9 @@ export default {
     PersonalNotify,
     PersonalFollowed,
     PersonalFollower,
-    PersonalSetting
+    PersonalSetting,
   },
+
   data() {
     return {
       img_avatar,
@@ -141,6 +233,7 @@ export default {
       msgComponent: 'PersonalNotify',
 
       personal: {
+        userId:undefined,
         blogCount: 0,
         postUrl: undefined,
         usablePoint: 0,
@@ -176,13 +269,30 @@ export default {
     this.msg = this.$route.query.msg
     this.msgComponent =
       this.msg === '0' ? 'PersonalNotify' : 'PersonalUnreadNotify'
+    this.tab = this.$route.query.tab || this.tab
+    document.title = '个人中心 - 太极开发者社区'
+    console.info(
+        'create',
+        this.$route,
+        this.msgComponent,
+        this.$route.query.tab
+      )
   },
   watch: {
     $route(route) {
+      console.info(
+        'watch',
+        route,
+        this.$route,
+        route.query.msg,
+        this.msgComponent,
+        this.$route.query.tab
+      )
       this.msg = route.query.msg
       this.msgComponent =
         this.msg === '0' ? 'PersonalNotify' : 'PersonalUnreadNotify'
-      this.activeTab = this.$route.query.tab || this.activeTab
+
+      this.tab = this.$route.query.tab || this.tab
     },
   },
   methods: {
@@ -190,6 +300,7 @@ export default {
       getPersonalInfo()
         .then((response) => {
           this.personal = response.data
+          console.info(this.personal.userId,"this.personal")
         })
         .catch(() => {})
     },

@@ -1,3 +1,4 @@
+@import '../variables.scss';
 // 屏幕小于600显示
 .small-screen-only {
   @media screen and (min-width: $breakpoint-sm-min) {
@@ -41,4 +42,111 @@
 a {
   text-decoration: none;
   color: #000000;
+}
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0; 
+  padding: 0;
+}
+
+
+html {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+body {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+  font-size: $fontSizeBase;
+  color: $routineColor;
+}
+
+#app{
+  height: 100%;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+a,
+a:focus,
+a:hover {
+  cursor: pointer;
+  color: inherit;
+  outline: none;
+  text-decoration: none;
+}
+
+div:focus{
+  outline: none;
+}
+
+.clearfix {
+  &:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+  }
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar-track-piece {
+  background: transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $subColor;
+  border-radius: 20px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color:$routineColor;
+}
+
+/* 页面选中样式 */
+::selection {
+  background: $darkBgColor;
+  color: $mainBgColor;
+}
+::-moz-selection {
+  background: $darkBgColor;
+  color: $mainBgColor;
+}
+::-webkit-selection {
+  background: $darkBgColor;
+  color: $mainBgColor;
+}
+
+/* 鼠标悬浮放大动画 */
+.hover-transition {
+  transition-duration: 0.5s;
+  &:hover, &:focus, &:active {
+    transform: scale(1.05);
+    transition-timing-function: cubic-bezier(0.47,2.02,0.31,-0.36);
+  }
+}
+
+.el-button--primary {
+/*  background-color: $frontOutButtonColor;
+  border-color: $frontOutButtonColor ;*/
+  background-color: $brandColor !important;
+  border-color: $brandColor !important;
+
+}
+.el-tabs__item.is-active {
+  color: $brandColor !important;
 }

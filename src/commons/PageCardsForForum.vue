@@ -11,17 +11,17 @@
             <div class="col-4">
               <img
                 v-if="!$q.screen.lt.md"
-                :src="item.pic"
+                :src="item.pic || item.forumLog"
                 class="img-location-left"
               />
-              <img v-else :src="item.pic" class="img-location-left-small" />
+              <img v-else :src="item.pic || item.forumLog" class="img-location-left-small" />
             </div>
             <div class="col-8">
               <div class="text-body2 q-pt-md q-pb-xs">
-                {{ item.title || item.name }}
+                {{ item.title || item.name || item.forumCategoryName }}
               </div>
               <div class="text-caption cut-text text-grey-14 q-pr-md">
-                {{ item.summary || item.description }}
+                {{ item.summary || item.description || item.forumDescription }}
               </div>
             </div>
           </div>
@@ -33,17 +33,17 @@
             <div class="col-4">
               <img
                 v-if="!$q.screen.lt.md"
-                :src="item.pic"
+                :src="item.pic || item.forumLog"
                 class="img-location-left"
               />
-              <img v-else :src="item.pic" class="img-location-left-small" />
+              <img v-else :src="item.pic || item.forumLog" class="img-location-left-small" />
             </div>
             <div class="col-8">
               <div class="text-body2 q-pt-md q-pb-xs">
-                {{ item.title || item.name }}
+                {{ item.title || item.name || item.forumCategoryName }}
               </div>
               <div class="text-caption cut-text text-grey-14 q-pr-md">
-                {{ item.summary || item.description }}
+                {{ item.summary || item.description || item.forumDescription }}
               </div>
             </div>
           </div>

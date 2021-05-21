@@ -1,25 +1,8 @@
 <template>
-  <div class="q-pa-md row q-col-gutter-md">
-    <div class="col-6" v-for="item in forums" :key="item.id || item.name">
-      <router-link :to="item.baseUrl" class="a-decoration-none">
-        <q-card flat  bordered :class="[`card-img-left`]">
-          <div class="row">
-            <div class="col-4">
-              <img :src="item.forumLog" :class="[`img-location-left`]" />
-            </div>
-            <div class="col-8">
-              <div class="text-body2 q-pt-md q-pb-xs">
-                {{ item.forumCategoryName || item.name }}
-              </div>
-              <div class="text-caption cut-text text-grey-14 q-pr-md">
-                {{ item.forumDescription || item.description }}
-              </div>
-            </div>
-          </div>
-        </q-card>
-      </router-link>
-    </div>
-  </div>
+  <tdf-page-cards-for-forum
+    :list="forums"
+    img="left"
+  ></tdf-page-cards-for-forum>
 </template>
 
 <script>

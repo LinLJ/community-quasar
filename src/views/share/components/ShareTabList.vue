@@ -52,6 +52,7 @@ export default {
 @import '../../../styles/variables.scss';
 .share-list {
   min-height: 20px;
+  width:100%;
   .share-item {
     border: 1px solid $borderColor;
     margin-bottom: -1px;

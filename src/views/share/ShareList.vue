@@ -47,7 +47,7 @@
         </div>
       </div>
     </div>
-    <div class="q-pt-md">
+    <div class="q-pt-md width-100">
       <q-tabs v-model="activeTab" dense align="left" :breakpoint="0">
         <q-tab name="first" label="推荐阅读" />
         <q-tab name="second" label="技术平台" />

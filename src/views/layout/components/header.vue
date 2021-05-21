@@ -15,26 +15,37 @@
           class="router-tag-width row show-menu-tags"
           v-show="!showSearch"
         >
-          <q-route-tab
-            class="col q-pa-none"
-            v-for="item in navigation"
-            :key="item.path"
-            :name="item.meta.title"
-            :label="item.meta.title"
-            :exact="item.exact"
-            :to="item.path"
-          />
+          <template v-for="item in navigation">
+            <q-route-tab
+              v-if="!item.meta.external"
+              class="col q-pa-none"
+              :key="item.path"
+              :name="item.meta.title"
+              :label="item.meta.title"
+              :exact="item.exact"
+              :to="item.path"
+            />
+            <q-tab
+              v-else
+              class="col q-pa-none"
+              :key="item.path"
+              :name="item.meta.title"
+              :exact="item.exact"
+              ><a :href="item.path" target="_blank">{{ item.meta.title }}</a>
+            </q-tab>
+          </template>
         </q-tabs>
 
         <q-input
           v-if="showSearch"
           dense
           square
-          v-model="search"
+          v-model="keyword"
           @blur="blurInput"
           placeholder="Search"
           ref="searchInput"
           class="bg-white col"
+          @keyup.enter.native="handleSearch"
         >
         </q-input>
 
@@ -80,6 +91,7 @@ export default {
       img_logo,
       showSearch: false,
       search: '',
+      keyword: '', // 搜索框输入内容
     }
   },
   computed: {
@@ -101,13 +113,24 @@ export default {
     },
     blurInput() {
       this.showSearch = false
-      this.search = ''
+      this.keyword = ''
     },
     focusInput() {
       this.showSearch = true
       this.$nextTick(() => {
         this.$refs.searchInput.focus()
       })
+    },
+    handleSearch() {
+      this.$router.push({
+        path: '/search',
+        query: { category: 'all', keyword: this.keyword },
+      })
+      this.handleHide()
+    },
+    handleHide() {
+      this.showSearch = false
+      this.keyword = ''
     },
   },
 }

@@ -9,7 +9,7 @@
         control-color="white"
         :autoplay="autoplay"
         padding
-        :arrows="arrows"
+        arrows="arrows"
         infinite
         :navigation="navigation"
         :height="height"

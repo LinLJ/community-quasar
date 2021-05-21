@@ -13,7 +13,7 @@
 
         <q-item-section>
           <q-item-label>{{ personal.userName }}</q-item-label>
-          <q-item-label caption
+          <q-item-label caption @click="handleUnreadMsg"
             >{{ personal.unreadNotifies }}未读消息</q-item-label
           >
         </q-item-section>
@@ -130,6 +130,11 @@ export default {
       img_avatar,
     }
   },
+  methods:{
+    handleUnreadMsg() {
+      this.$router.push('/personal?tab=notify&msg=1')
+    }
+  }
 }
 </script>
 
