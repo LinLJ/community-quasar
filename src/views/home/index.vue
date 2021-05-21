@@ -82,19 +82,41 @@
         v-if="!$q.platform.is.mobile"
         class="col-md-4 q-pr-lg normal-screen-only"
       >
+      
         <tdf-user-card class="q-pa-md" v-if="isLogin" :personal="personal" />
-        <router-link to="/rank" tag="a" target="_blank" class="label no-list">
-        <tdf-box
-          class="text-h6 q-pa-md width-auto"
-          showBorder
-          content="社区排行榜"
-        ></tdf-box></router-link>
- 
+        <div v-else class="text-center text-h6 q-pa-md width-auto">
+          <q-btn
+          
+            @click="login"
+            size="lg"
+            
+            color="primary"
+            style="width: 100%; height: 50px"
+            label="统一认证登陆"
+          />
+        </div>
         
-        <tdf-box class="text-h6 q-pa-md" showBorder content="博客推荐">
+        <a href="https://gitlab.taiji.com.cn/linlj/community-ui-quasar/-/issues/new" target="_blank">
+        <tdf-box
+            class="text-h6 q-px-md q-py-xs widtxh-auto"
+            content="提出issue"
+          ></tdf-box>
+        </a>
+        
+        <router-link to="/rank" tag="a" target="_blank" class="label no-list">
+          <tdf-box
+            class="text-h6 q-px-md q-py-xs width-auto"
+            showBorder
+            content="社区排行榜"
+          ></tdf-box
+        ></router-link>
+        
+        
+        
+        <tdf-box class="text-h6 q-px-md q-py-xs" showBorder content="博客推荐">
           <tdf-list rounded :list="recommendBlogs" type="blog"></tdf-list>
         </tdf-box>
-        <tdf-box class="text-h6 q-pa-md" showBorder content="最新文章">
+        <tdf-box class="text-h6 q-px-md q-py-xs" showBorder content="最新文章">
           <tdf-list rounded :list="newestBlogs" type="blog"></tdf-list>
         </tdf-box>
       </div>
@@ -104,6 +126,8 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { login } from '@/utils/oauthLogin'
+
 
 import {
   getInfolinksByAchievements,
@@ -135,12 +159,18 @@ export default {
     this.getNewestBlogs()
     this.getNewestForums()
     this.getForumGroups()
-    this.getPersonalInfo()
+    if(this.isLogin){
+      this.getPersonalInfo()
+    }
+    
   },
   computed: {
     ...mapGetters(['isLogin']),
   },
   methods: {
+    login() {
+      login()
+    },
     getAdvertising() {
       // 左侧广告轮播
       getInfolinksByAdvertisings()

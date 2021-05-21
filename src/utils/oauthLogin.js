@@ -9,6 +9,7 @@ import { removeToken } from './token'
  * hack方法，接受参数为登录成功后重定向地址，缺省时重定向首页
  */
 export function login(redirectPath) {
+  console.log('oauthLogin.js-login-入参：redirectPath', redirectPath)
   if (redirectPath) {
     window.sessionStorage.setItem('redirectPath', redirectPath)
   }
@@ -17,7 +18,7 @@ export function login(redirectPath) {
     response_type: process.env.VUE_APP_responseType,
     scope: process.env.VUE_APP_scope,
     state: process.env.VUE_APP_state,
-    redirect_uri: process.env.VUE_APP_redirectUri
+    redirect_uri: process.env.VUE_APP_redirectUri,
   })
   window.location.href = `${process.env.VUE_APP_userAuthorizationUri}?${param}`
 }
@@ -28,20 +29,26 @@ export function login(redirectPath) {
  * @return {Promise Object}
  */
 export function getToken(code) {
-  const oauthKey = Base64.encode(`${process.env.VUE_APP_clientId}:${process.env.VUE_APP_clientSecret}`)
+  const oauthKey = Base64.encode(
+    `${process.env.VUE_APP_clientId}:${process.env.VUE_APP_clientSecret}`
+  )
   const param = qs.stringify({
     client_id: process.env.VUE_APP_clientId,
     client_secret: process.env.VUE_APP_clientSecret,
     code,
-    grant_type: process.env.VUE_APP_grantType
+    grant_type: process.env.VUE_APP_grantType,
   })
   // redirect_uri不放在qs中序列化，转码导致请求400，所以放在下面拼接
-  return axios.post(`${process.env.VUE_APP_accessTokenUri}?${param}&redirect_uri=${process.env.VUE_APP_redirectUri}`, null, {
-    headers: {
-      Accept: 'application/json',
-      Authorization: 'Basic ' + oauthKey
+  return axios.post(
+    `${process.env.VUE_APP_accessTokenUri}?${param}&redirect_uri=${process.env.VUE_APP_redirectUri}`,
+    null,
+    {
+      headers: {
+        Accept: 'application/json',
+        Authorization: 'Basic ' + oauthKey,
+      },
     }
-  })
+  )
 }
 
 /**
@@ -52,7 +59,7 @@ export function getToken(code) {
 export function getUserInfo(token) {
   return axios({
     url: `${process.env.VUE_APP_userInfoUri}?access_token=${token}`,
-    headers: { 'Accept': 'application/json' }
+    headers: { Accept: 'application/json' },
   })
 }
 
@@ -65,7 +72,7 @@ export function bindTDFUaaUser(data) {
   return request({
     url: `/bindTDFUaaUserCommunity`,
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -88,7 +95,7 @@ export function filterTest(data) {
   return request({
     url: `/filterTest`,
     method: 'post',
-    data
+    data,
   })
 }
 
@@ -98,11 +105,9 @@ export function filterTest(data) {
 export function getUserRole() {
   return request({
     url: '/system/user/findUserRoleForBackToVue',
-    method: 'get'
+    method: 'get',
   })
 }
-
-
 
 /**
  * 记录用户登陆过程
@@ -111,7 +116,7 @@ export function getUserRole() {
 export function setLoginMessage() {
   return request({
     url: '/user/login',
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -131,48 +136,56 @@ export function setLoginMessage() {
  * @return {Promise Object}
  */
 export function logout() {
+  console.log("oauthLogin.js-logout-入口，登出接口名字：",process.env.VUE_APP_logoutUri)
   // 1. 调用认证中心退出接口
-  return axios.get(`${process.env.VUE_APP_logoutUri}`, {
-    withCredentials: true //正确写法
-    // headers: {'withCredentials': 'true'} //错误写法
-  }).then((data ) => {
-    if (data.data.success) {
-      // 2. 删除access_token
-      removeToken()
-      window.location.reload()
-    } else {
-      alert("退出失败："+JSON.stringify(data))
-    }
-  })
+  return axios
+    .get(`${process.env.VUE_APP_logoutUri}`, {
+      withCredentials: true, //正确写法
+      // headers: {'withCredentials': 'true'} //错误写法
+    })
+    .then((data) => {
+      console.log("oauthLogin.js-logout-调用后台退出接口后，判断是否成功",data.data.success)
+      if (data.data.success) {
+        // 2. 删除access_token
+        removeToken()
+        window.location.reload()
+      } else {
+        alert('退出失败：' + JSON.stringify(data))
+      }
+    })
 }
 
-
 export function refreshToken(refresh_token) {
-  const oauthKey = Base64.encode(process.env.VUE_APP_clientId + ':' + process.env.VUE_APP_clientSecret)
+  const oauthKey = Base64.encode(
+    process.env.VUE_APP_clientId + ':' + process.env.VUE_APP_clientSecret
+  )
   // redirect_uri不放在qs中序列化，转码导致请求400，所以放在下面拼接
-  const refreshTokenUrlParam = '?' + 'refresh_token=' + refresh_token +
-    '&' + 'grant_type=refresh_token'
-
-
+  const refreshTokenUrlParam =
+    '?' + 'refresh_token=' + refresh_token + '&' + 'grant_type=refresh_token'
 
   //解决refresh token过期问题
-  const refreshTokenReturn = axios.post(process.env.VUE_APP_accessTokenUri + refreshTokenUrlParam
-    , null, {
+  const refreshTokenReturn = axios
+    .post(process.env.VUE_APP_accessTokenUri + refreshTokenUrlParam, null, {
       headers: {
         Accept: 'application/json',
-        Authorization: 'Basic ' + oauthKey
+        Authorization: 'Basic ' + oauthKey,
+      },
+    })
+    .then(
+      (data) => {
+        return data
+      },
+      (error) => {
+        // http status不是2xx的视为error
+        console.log('error', error)
+        removeToken()
+        //重定向到首页
+        window.location.href = '/'
       }
-    }).then(data=>{
-      return data
-  },error => { // http status不是2xx的视为error
-    console.log("error",error)
-    removeToken()
-    //重定向到首页
-    window.location.href = "/"
-  })
+    )
   return refreshTokenReturn
 
-/*  return axios.post(process.env.VUE_APP_accessTokenUri + refreshTokenUrlParam
+  /*  return axios.post(process.env.VUE_APP_accessTokenUri + refreshTokenUrlParam
     , null, {
       headers: {
         Accept: 'application/json',
@@ -186,7 +199,7 @@ export function refreshToken(refresh_token) {
     })*/
 
   //可以解决token过期问题
-/*  return axios.post(process.env.VUE_APP_accessTokenUri + refreshTokenUrlParam
+  /*  return axios.post(process.env.VUE_APP_accessTokenUri + refreshTokenUrlParam
     , null, {
       headers: {
         Accept: 'application/json',
@@ -194,4 +207,3 @@ export function refreshToken(refresh_token) {
       }
     },)*/
 }
-

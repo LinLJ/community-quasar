@@ -81,7 +81,7 @@
           </router-link>
         </div>
 
-        <personal-info />
+        <personal-info v-if="isLogin"/>
       </div>
     </div>
   </div>
