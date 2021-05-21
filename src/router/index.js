@@ -153,16 +153,16 @@ export const navRouter = [
             component: () => import('@/views/mall/MallList'),
             meta: { title: '商品列表', requireLogin: true },
           },
-          // {
-          //   path: 'view/:id',
-          //   component: () => import('@/views/mall/MallView'),
-          //   meta: { title: '商品购买', requireLogin: true },
-          // },
-          // {
-          //   path: 'history',
-          //   component: () => import('@/views/mall/MallHistory'),
-          //   meta: { title: '购买历史', requireLogin: true },
-          // },
+          {
+            path: 'view/:id',
+            component: () => import('@/views/mall/MallView'),
+            meta: { title: '商品购买', requireLogin: true },
+          },
+          {
+            path: 'history',
+            component: () => import('@/views/mall/MallHistory'),
+            meta: { title: '购买历史', requireLogin: true },
+          },
         ],
       },
       {
